@@ -63,6 +63,8 @@
   .cat-tab[data-cat="たべもの"].active{background:var(--orange);box-shadow:0 3px 0 #c94040}
   .cat-tab[data-cat="かぞく"].active{background:var(--pink);box-shadow:0 3px 0 #cc6ea0}
   .cat-tab[data-cat="いろ・かず"].active{background:var(--purple);box-shadow:0 3px 0 #9945d4}
+  .cat-tab[data-cat="さぎょう"].active{background:var(--blue);box-shadow:0 3px 0 #2a70e0}
+  .cat-tab[data-cat="カスタム"].active{background:var(--dark);box-shadow:0 3px 0 #22224a}
 
   /* PROMPT */
   .prompt-card{background:white;border-radius:28px;padding:1.4rem 1.5rem 1.1rem;box-shadow:0 8px 0 #c5d8ef,0 12px 30px var(--shadow);text-align:center;margin-bottom:.8rem;position:relative;overflow:hidden}
@@ -211,6 +213,22 @@
     <button class="cat-tab" data-cat="たべもの">🍎 たべもの</button>
     <button class="cat-tab" data-cat="かぞく">👨‍👩‍👧 かぞく</button>
     <button class="cat-tab" data-cat="いろ・かず">🎨 いろ・かず</button>
+    <button class="cat-tab" data-cat="さぎょう">🧹 さぎょう</button>
+    <button class="cat-tab" data-cat="カスタム">✏️ じぶんで</button>
+  </div>
+
+  <!-- カスタム単語追加パネル -->
+  <div id="customPanel" style="display:none;background:white;border-radius:24px;padding:1rem 1.2rem;box-shadow:0 6px 0 #c5d8ef;margin-bottom:.8rem">
+    <div style="font-size:.78rem;color:#a0b0c8;letter-spacing:.1em;margin-bottom:.6rem">▼ ことばをついかしよう</div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap">
+      <input id="customEmoji" type="text" placeholder="😊" maxlength="2"
+        style="width:54px;font-size:1.4rem;text-align:center;border:3px solid #c5d8ef;border-radius:14px;padding:.3rem;font-family:Kosugi Maru,sans-serif;outline:none">
+      <input id="customWord" type="text" placeholder="ことばをにゅうりょく"
+        style="flex:1;min-width:120px;font-size:1rem;border:3px solid #c5d8ef;border-radius:14px;padding:.3rem .7rem;font-family:Kosugi Maru,sans-serif;outline:none">
+      <button onclick="addCustomWord()"
+        style="font-family:Kosugi Maru,sans-serif;background:var(--blue);color:white;border:none;border-radius:14px;padding:.3rem .9rem;font-size:.9rem;cursor:pointer;box-shadow:0 3px 0 #2a70e0;font-weight:700">ついか</button>
+    </div>
+    <div id="customList" style="display:flex;flex-wrap:wrap;gap:.4rem;min-height:28px"></div>
   </div>
 
   <!-- お題カード -->
@@ -312,6 +330,19 @@ const PROMPTS = {
     {emoji:"4️⃣", text:"し・よん",   keys:["し","よん","四","4"]},
     {emoji:"5️⃣", text:"ご",         keys:["ご","五","5"]},
   ],
+  "さぎょう": [
+    {emoji:"🙌", text:"てをあらう",     keys:["てをあらう","手を洗う","手洗い"]},
+    {emoji:"🦷", text:"はをみがく",     keys:["はをみがく","歯を磨く","歯磨き"]},
+    {emoji:"👕", text:"きがえる",       keys:["きがえる","着替える","着替え"]},
+    {emoji:"🛏️", text:"ねる",           keys:["ねる","寝る"]},
+    {emoji:"🪑", text:"すわる",         keys:["すわる","座る"]},
+    {emoji:"🧹", text:"そうじする",     keys:["そうじする","掃除する","掃除"]},
+    {emoji:"🎒", text:"かばんをもつ",   keys:["かばんをもつ","鞄を持つ"]},
+    {emoji:"🥄", text:"たべる",         keys:["たべる","食べる"]},
+    {emoji:"🥤", text:"のむ",           keys:["のむ","飲む"]},
+    {emoji:"🚶", text:"あるく",         keys:["あるく","歩く"]},
+  ],
+  "カスタム": [],
 };
 
 // =====================
@@ -399,9 +430,10 @@ function setupTabs() {
       document.querySelectorAll(".cat-tab").forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
       currentCat = tab.dataset.cat;
-      shuffle(PROMPTS[currentCat]);
+      if (currentCat !== "カスタム") shuffle(PROMPTS[currentCat]);
       currentIndex = 0;
       resetState();
+      document.getElementById("customPanel").style.display = currentCat === "カスタム" ? "block" : "none";
       showPrompt();
     });
   });
@@ -416,6 +448,14 @@ function currentPrompt() {
 }
 
 function showPrompt() {
+  if (currentCat === "カスタム" && PROMPTS["カスタム"].length === 0) {
+    document.getElementById("promptEmoji").textContent = "✏️";
+    document.getElementById("promptText").textContent = "ことばをついかしてね";
+    document.getElementById("resultCard").classList.remove("show");
+    resetState();
+    setBubble("ことばをついかしてね！");
+    return;
+  }
   const p = currentPrompt();
   document.getElementById("promptEmoji").textContent = p.emoji;
   document.getElementById("promptText").textContent = p.text;
@@ -725,6 +765,40 @@ function shuffle(arr) {
     const j = Math.floor(Math.random()*(i+1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+}
+
+// =====================
+// カスタム単語追加
+// =====================
+function addCustomWord() {
+  const emojiEl = document.getElementById("customEmoji");
+  const wordEl = document.getElementById("customWord");
+  const emoji = emojiEl.value.trim() || "📝";
+  const word = wordEl.value.trim();
+  if (!word) { wordEl.focus(); return; }
+
+  const entry = {emoji: emoji, text: word, keys: [word]};
+  PROMPTS["カスタム"].push(entry);
+
+  // タグ表示
+  const tag = document.createElement("div");
+  tag.style.cssText = "background:var(--sky);border-radius:20px;padding:.25rem .7rem;font-size:.82rem;color:var(--dark);display:flex;align-items:center;gap:.3rem;cursor:default";
+  tag.innerHTML = `${emoji} ${word} <span onclick="removeCustomWord(this, this.dataset.word)" data-word="${word}" style="cursor:pointer;color:#c94040;font-weight:700;margin-left:2px">✕</span>`;
+  document.getElementById("customList").appendChild(tag);
+
+  emojiEl.value = "";
+  wordEl.value = "";
+  wordEl.focus();
+
+  // 今カスタムタブを表示中なら即反映
+  if (currentCat === "カスタム") { currentIndex = PROMPTS["カスタム"].length - 1; showPrompt(); }
+}
+
+function removeCustomWord(el) {
+  const word = el.dataset.word;
+  PROMPTS["カスタム"] = PROMPTS["カスタム"].filter(p => p.text !== word);
+  el.parentElement.remove();
+  if (currentCat === "カスタム") { currentIndex = 0; showPrompt(); }
 }
 
 // =====================
