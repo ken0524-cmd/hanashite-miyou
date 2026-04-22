@@ -63,8 +63,8 @@
   .cat-tab[data-cat="たべもの"].active{background:var(--orange);box-shadow:0 3px 0 #c94040}
   .cat-tab[data-cat="かぞく"].active{background:var(--pink);box-shadow:0 3px 0 #cc6ea0}
   .cat-tab[data-cat="いろ・かず"].active{background:var(--purple);box-shadow:0 3px 0 #9945d4}
-  .cat-tab[data-cat="さぎょう"].active{background:var(--blue);box-shadow:0 3px 0 #2a70e0}
   .cat-tab[data-cat="カスタム"].active{background:var(--dark);box-shadow:0 3px 0 #22224a}
+  .cat-tab[data-cat="さ行"].active{background:#e67e22;box-shadow:0 3px 0 #b9620e}
 
   /* PROMPT */
   .prompt-card{background:white;border-radius:28px;padding:1.4rem 1.5rem 1.1rem;box-shadow:0 8px 0 #c5d8ef,0 12px 30px var(--shadow);text-align:center;margin-bottom:.8rem;position:relative;overflow:hidden}
@@ -213,8 +213,8 @@
     <button class="cat-tab" data-cat="たべもの">🍎 たべもの</button>
     <button class="cat-tab" data-cat="かぞく">👨‍👩‍👧 かぞく</button>
     <button class="cat-tab" data-cat="いろ・かず">🎨 いろ・かず</button>
-    <button class="cat-tab" data-cat="さぎょう">🧹 さぎょう</button>
     <button class="cat-tab" data-cat="カスタム">✏️ じぶんで</button>
+    <button class="cat-tab" data-cat="さ行">🔤 さ行</button>
   </div>
 
   <!-- カスタム単語追加パネル -->
@@ -329,18 +329,6 @@ const PROMPTS = {
     {emoji:"3️⃣", text:"さん",       keys:["さん","三","3"]},
     {emoji:"4️⃣", text:"し・よん",   keys:["し","よん","四","4"]},
     {emoji:"5️⃣", text:"ご",         keys:["ご","五","5"]},
-  ],
-  "さぎょう": [
-    {emoji:"🙌", text:"てをあらう",     keys:["てをあらう","手を洗う","手洗い"]},
-    {emoji:"🦷", text:"はをみがく",     keys:["はをみがく","歯を磨く","歯磨き"]},
-    {emoji:"👕", text:"きがえる",       keys:["きがえる","着替える","着替え"]},
-    {emoji:"🛏️", text:"ねる",           keys:["ねる","寝る"]},
-    {emoji:"🪑", text:"すわる",         keys:["すわる","座る"]},
-    {emoji:"🧹", text:"そうじする",     keys:["そうじする","掃除する","掃除"]},
-    {emoji:"🎒", text:"かばんをもつ",   keys:["かばんをもつ","鞄を持つ"]},
-    {emoji:"🥄", text:"たべる",         keys:["たべる","食べる"]},
-    {emoji:"🥤", text:"のむ",           keys:["のむ","飲む"]},
-    {emoji:"🚶", text:"あるく",         keys:["あるく","歩く"]},
   ],
   "カスタム": [],
 };
