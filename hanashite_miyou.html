@@ -34,21 +34,9 @@
   .subtitle{font-size:.83rem;color:#7a8eab;margin-top:.2rem;letter-spacing:.1em}
 
   /* MASCOT */
-  .mascot-wrap{position:relative;z-index:1;display:flex;justify-content:center;margin:.3rem 0 0}
-  .mascot{position:relative;width:110px;height:110px}
-  .mascot-body{width:90px;height:90px;background:var(--yellow);border-radius:50%;position:absolute;bottom:0;left:50%;transform:translateX(-50%);box-shadow:0 6px 0 #e0b800,0 8px 20px rgba(255,217,61,.4);animation:mascotBob 2.5s ease-in-out infinite}
-  @keyframes mascotBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
-  .mascot-eye{position:absolute;background:var(--dark);border-radius:50%}
-  .eye-l{width:12px;height:14px;top:28px;left:20px}.eye-r{width:12px;height:14px;top:28px;right:20px}
-  .mascot-shine{position:absolute;width:4px;height:4px;background:white;border-radius:50%;top:3px;left:2px}
-  .mascot-mouth{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:36px;height:18px;border-radius:0 0 18px 18px;background:var(--orange);overflow:hidden;transition:all .3s}
-  .mascot-mouth.talking{animation:mouthTalk .3s ease-in-out infinite alternate}
-  @keyframes mouthTalk{from{height:10px}to{height:24px}}
-  .mascot-blush{position:absolute;width:14px;height:8px;background:var(--pink);border-radius:50%;opacity:.6}
-  .blush-l{bottom:28px;left:10px}.blush-r{bottom:28px;right:10px}
-  .mascot-ears{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:90px}
-  .ear{position:absolute;width:18px;height:28px;background:var(--yellow);border-radius:50% 50% 0 0;box-shadow:0 -3px 0 #e0b800}
-  .ear-l{left:8px;transform:rotate(-15deg)}.ear-r{right:8px;transform:rotate(15deg)}
+  .mascot-wrap{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;margin:.3rem 0 0}
+  .mascot-svg-wrap{display:inline-block;animation:mascotBob 2.5s ease-in-out infinite}
+  @keyframes mascotBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   .bubble{position:absolute;top:0;right:-72px;background:white;border-radius:16px 16px 16px 4px;padding:6px 12px;font-size:.78rem;color:var(--dark);box-shadow:0 4px 12px var(--shadow);white-space:nowrap;transition:all .3s}
 
   /* MAIN */
@@ -183,18 +171,20 @@
 
 <!-- マスコット -->
 <div class="mascot-wrap">
-  <div class="mascot">
-    <div class="mascot-ears">
-      <div class="ear ear-l"></div>
-      <div class="ear ear-r"></div>
-    </div>
-    <div class="mascot-body">
-      <div class="mascot-eye eye-l"><div class="mascot-shine"></div></div>
-      <div class="mascot-eye eye-r"><div class="mascot-shine"></div></div>
-      <div class="mascot-blush blush-l"></div>
-      <div class="mascot-blush blush-r"></div>
-      <div class="mascot-mouth" id="mascotMouth"></div>
-    </div>
+  <div class="mascot-svg-wrap" id="mascotSvgWrap">
+    <svg id="gyozaSvg" width="120" height="100" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="70" cy="72" rx="58" ry="42" fill="#f5f0e8" stroke="#2a2a2a" stroke-width="3"/>
+      <path d="M 44 35 Q 50 24 57 30 Q 63 20 70 28 Q 77 20 84 30 Q 91 24 97 35" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
+      <ellipse cx="50" cy="62" rx="13" ry="16" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+      <ellipse cx="90" cy="62" rx="13" ry="16" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+      <ellipse cx="56" cy="64" rx="8" ry="10" fill="#6b4c2a" opacity="0.75"/>
+      <ellipse cx="84" cy="64" rx="8" ry="10" fill="#6b4c2a" opacity="0.75"/>
+      <ellipse cx="53" cy="60" rx="3" ry="3.5" fill="white" opacity="0.9"/>
+      <ellipse cx="81" cy="60" rx="3" ry="3.5" fill="white" opacity="0.9"/>
+      <ellipse cx="30" cy="78" rx="10" ry="6" fill="#FF9ECD" opacity="0.6"/>
+      <ellipse cx="110" cy="78" rx="10" ry="6" fill="#FF9ECD" opacity="0.6"/>
+      <path id="gyoza-mouth" d="M 58 92 Q 70 100 82 92" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
   </div>
   <div class="bubble" id="mascotBubble">いっしょにれんしゅうしよう！</div>
 </div>
@@ -603,8 +593,11 @@ function speakFeedback(correct, word) {
   if (!speechSynth) return;
   speechSynth.cancel();
 
-  const mouth = document.getElementById("mascotMouth");
-  mouth.classList.add("talking");
+  const gyozaMouth = document.getElementById("gyoza-mouth");
+  let talkInterval = setInterval(() => {
+    gyozaMouth.setAttribute("d", "M 55 90 Q 70 104 85 90");
+    setTimeout(() => gyozaMouth.setAttribute("d", "M 58 92 Q 70 100 82 92"), 150);
+  }, 300);
 
   let text = correct
     ? `${word}！ よくできました！ すごいね！`
@@ -615,8 +608,8 @@ function speakFeedback(correct, word) {
   utt.rate = 0.85;
   utt.pitch = 1.3;
 
-  utt.onend = () => { mouth.classList.remove("talking"); };
-  utt.onerror = () => { mouth.classList.remove("talking"); };
+  utt.onend = () => { clearInterval(talkInterval); gyozaMouth.setAttribute("d", "M 58 92 Q 70 100 82 92"); };
+  utt.onerror = () => { clearInterval(talkInterval); gyozaMouth.setAttribute("d", "M 58 92 Q 70 100 82 92"); };
 
   speechSynth.speak(utt);
 }

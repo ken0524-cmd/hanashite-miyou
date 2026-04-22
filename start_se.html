@@ -89,7 +89,7 @@
   /* ===== マスコット ===== */
   .mas-wrap{margin-bottom:.9rem;display:inline-block;position:relative}
   .mascot{
-    width:128px;height:128px;position:relative;margin:0 auto;
+    display:inline-block;
     animation:mascBob 2.6s ease-in-out infinite;
     cursor:pointer;
   }
@@ -97,68 +97,7 @@
     0%,100%{transform:translateY(0) rotate(-2deg)}
     50%{transform:translateY(-14px) rotate(2deg)}
   }
-  .mas-shadow{
-    position:absolute;bottom:-10px;left:50%;
-    transform:translateX(-50%);
-    width:76px;height:14px;
-    background:rgba(100,130,200,.16);border-radius:50%;
-    animation:shadowPulse 2.6s ease-in-out infinite;
-  }
-  @keyframes shadowPulse{
-    0%,100%{transform:translateX(-50%) scaleX(1);opacity:.5}
-    50%{transform:translateX(-50%) scaleX(.68);opacity:.18}
-  }
-  .m-body{
-    width:106px;height:106px;
-    background:radial-gradient(circle at 35% 35%,#ffe870 0%,var(--yellow) 65%);
-    border-radius:50%;
-    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-    box-shadow:0 8px 0 #c9a800,0 12px 28px rgba(255,217,61,.4);
-  }
-  .m-ears{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:106px}
-  .m-ear{
-    position:absolute;width:23px;height:34px;
-    background:radial-gradient(circle at 40% 30%,#ffe870 0%,var(--yellow) 65%);
-    border-radius:50% 50% 0 0;box-shadow:0 -4px 0 #c9a800;
-  }
-  .m-ear.l{left:7px;transform:rotate(-20deg)}
-  .m-ear.r{right:7px;transform:rotate(20deg)}
-  .m-ear-in{
-    position:absolute;width:11px;height:18px;
-    background:var(--pink);border-radius:50% 50% 0 0;
-    left:50%;top:6px;transform:translateX(-50%);opacity:.55;
-  }
-  .m-eye{
-    position:absolute;background:var(--dark);
-    border-radius:50%;width:14px;height:16px;top:29px;
-    transition:transform .15s,border-radius .15s;
-  }
-  .m-eye.l{left:23px}.m-eye.r{right:23px}
-  .m-eye.happy{transform:scaleY(.3);border-radius:50% 50% 0 0}
-  .m-shine{width:5px;height:6px;background:white;border-radius:50%;position:absolute;top:2px;left:3px}
-  .m-blush{
-    position:absolute;width:17px;height:10px;
-    background:var(--pink);border-radius:50%;opacity:.5;bottom:30px;
-    animation:blushP 3s ease-in-out infinite;
-  }
-  @keyframes blushP{0%,100%{opacity:.5}50%{opacity:.8}}
-  .m-blush.l{left:11px}.m-blush.r{right:11px}
-  .m-mouth{
-    position:absolute;bottom:23px;left:50%;transform:translateX(-50%);
-    width:42px;height:21px;background:var(--orange);
-    border-radius:0 0 22px 22px;overflow:hidden;
-  }
-  .m-mouth::after{
-    content:'';position:absolute;top:0;left:0;right:0;
-    height:6px;background:rgba(255,255,255,.22);
-  }
-  .m-tongue{
-    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-    width:22px;height:13px;background:#ff9999;
-    border-radius:50% 50% 0 0;
-    animation:tongueP 3.5s ease-in-out infinite;
-  }
-  @keyframes tongueP{0%,65%,100%{transform:translateX(-50%) translateY(13px)}80%,92%{transform:translateX(-50%) translateY(1px)}}
+  .mascot.poked{animation:none;transform:scale(1.18) rotate(6deg)}
 
   /* 吹き出し */
   .speech{
@@ -271,19 +210,20 @@
   <!-- マスコット -->
   <div class="mas-wrap">
     <div class="mascot" id="mascot" onclick="pokeMascot()">
-      <div class="m-ears">
-        <div class="m-ear l"><div class="m-ear-in"></div></div>
-        <div class="m-ear r"><div class="m-ear-in"></div></div>
-      </div>
-      <div class="m-body">
-        <div class="m-eye l" id="eyeL"><div class="m-shine"></div></div>
-        <div class="m-eye r" id="eyeR"><div class="m-shine"></div></div>
-        <div class="m-blush l"></div>
-        <div class="m-blush r"></div>
-        <div class="m-mouth"><div class="m-tongue"></div></div>
-      </div>
+      <svg id="gyozaSvg" width="140" height="120" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="70" cy="72" rx="58" ry="42" fill="#f5f0e8" stroke="#2a2a2a" stroke-width="3"/>
+        <path d="M 44 35 Q 50 24 57 30 Q 63 20 70 28 Q 77 20 84 30 Q 91 24 97 35" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
+        <ellipse cx="50" cy="62" rx="13" ry="16" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+        <ellipse cx="90" cy="62" rx="13" ry="16" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+        <ellipse id="pupilL" cx="56" cy="64" rx="8" ry="10" fill="#6b4c2a" opacity="0.75"/>
+        <ellipse id="pupilR" cx="84" cy="64" rx="8" ry="10" fill="#6b4c2a" opacity="0.75"/>
+        <ellipse cx="53" cy="60" rx="3" ry="3.5" fill="white" opacity="0.9"/>
+        <ellipse cx="81" cy="60" rx="3" ry="3.5" fill="white" opacity="0.9"/>
+        <ellipse cx="30" cy="78" rx="10" ry="6" fill="#FF9ECD" opacity="0.6"/>
+        <ellipse cx="110" cy="78" rx="10" ry="6" fill="#FF9ECD" opacity="0.6"/>
+        <path id="gyoza-mouth" d="M 58 92 Q 70 100 82 92" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
     </div>
-    <div class="mas-shadow"></div>
     <div class="speech" id="speech">いっしょに<br>れんしゅうしよう！🌟</div>
   </div>
 
@@ -399,12 +339,13 @@ function pokeMascot() {
   soundPoke();
 
   const m = document.getElementById('mascot');
-  const eL = document.getElementById('eyeL');
-  const eR = document.getElementById('eyeR');
+  const mouth = document.getElementById('gyoza-mouth');
   const sp = document.getElementById('speech');
 
-  eL.classList.add('happy'); eR.classList.add('happy');
-  m.style.cssText = 'animation:none;transform:scale(1.18) rotate(6deg)';
+  // ぎょうざがピョンと跳ねてニコッ
+  m.style.animation = 'none';
+  m.style.transform = 'scale(1.18) rotate(6deg)';
+  mouth.setAttribute('d', 'M 54 89 Q 70 104 86 89');
 
   bubIdx = (bubIdx+1) % bubTexts.length;
   sp.style.animation = 'none';
@@ -417,8 +358,9 @@ function pokeMascot() {
   spawnEmoji(m, ['💕','✨','⭐','🎵','🌟'][Math.floor(Math.random()*5)]);
 
   setTimeout(() => {
-    eL.classList.remove('happy'); eR.classList.remove('happy');
-    m.style.cssText = '';
+    m.style.animation = '';
+    m.style.transform = '';
+    mouth.setAttribute('d', 'M 58 92 Q 70 100 82 92');
     poking = false;
   }, 750);
 }
