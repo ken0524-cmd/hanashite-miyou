@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>はなしてみよう！ スタート</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow:#FFD93D; --orange:#FF6B6B;
+    --green:#6BCB77;  --blue:#4D96FF;
+    --purple:#C77DFF; --pink:#FF9ECD;
+    --dark:#3a3a5c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  body {
+    font-family:'Zen Maru Gothic',sans-serif;
+    min-height:100vh; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:#e8f4fd;
+  }
+
+  /* 背景グラデ */
+  .bg-grad {
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse at 15% 15%, #ffe0f0 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 85%, #d0eeff 0%, transparent 50%),
+      radial-gradient(ellipse at 65% 5%,  #fff8a0 0%, transparent 40%),
+      linear-gradient(160deg,#edf8ff 0%,#fde8ff 100%);
+  }
+
+  /* 浮かぶ泡 */
+  .bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .bub{position:absolute;border-radius:50%;opacity:0;animation:bubRise linear infinite}
+  @keyframes bubRise{
+    0%{transform:translateY(110vh) scale(.5);opacity:0}
+    5%{opacity:.55} 90%{opacity:.25}
+    100%{transform:translateY(-10vh) scale(1.1);opacity:0}
+  }
+
+  /* きらきら */
+  .sparkle{
+    position:fixed;pointer-events:none;z-index:0;
+    animation:twinkle ease-in-out infinite;user-select:none;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:0;transform:scale(.4) rotate(0deg)}
+    50%{opacity:1;transform:scale(1.3) rotate(25deg)}
+  }
+
+  /* ===== カード ===== */
+  .card{
+    position:relative;z-index:10;
+    background:rgba(255,255,255,.84);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-radius:48px;
+    padding:2.2rem 2rem 2rem;
+    max-width:360px;width:92%;
+    box-shadow:
+      0 0 0 3px rgba(255,255,255,.95),
+      0 14px 0 #c0d8f0,
+      0 26px 64px rgba(100,150,255,.18),
+      inset 0 1px 0 white;
+    text-align:center;
+    animation:cardPop .75s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes cardPop{
+    from{transform:scale(.5) translateY(70px);opacity:0}
+    to{transform:scale(1) translateY(0);opacity:1}
+  }
+
+  /* カードのデコ丸 */
+  .deco{position:absolute;border-radius:50%;z-index:-1}
+  .da{width:78px;height:78px;background:var(--yellow);box-shadow:0 5px 0 #c9a800;
+      top:-22px;right:-18px;animation:decoSpin 7s linear infinite}
+  .db{width:54px;height:54px;background:var(--pink);box-shadow:0 4px 0 #cc6ea0;
+      bottom:-16px;left:-14px;animation:decoSpin 9s linear infinite reverse}
+  .dc{width:34px;height:34px;background:var(--green);box-shadow:0 3px 0 #4aa855;
+      top:62px;left:-18px;animation:decoSpin 5s linear infinite}
+  .dd{width:26px;height:26px;background:var(--blue);box-shadow:0 3px 0 #2a70e0;
+      bottom:62px;right:-14px;animation:decoSpin 6s linear infinite reverse}
+  @keyframes decoSpin{
+    0%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.15)}
+    100%{transform:rotate(360deg) scale(1)}
+  }
+
+  /* ===== マスコット ===== */
+  .mas-wrap{margin-bottom:.9rem;display:inline-block;position:relative}
+  .mascot{
+    width:128px;height:128px;position:relative;margin:0 auto;
+    animation:mascBob 2.6s ease-in-out infinite;
+    cursor:pointer;
+  }
+  @keyframes mascBob{
+    0%,100%{transform:translateY(0) rotate(-2deg)}
+    50%{transform:translateY(-14px) rotate(2deg)}
+  }
+  .mas-shadow{
+    position:absolute;bottom:-10px;left:50%;
+    transform:translateX(-50%);
+    width:76px;height:14px;
+    background:rgba(100,130,200,.16);border-radius:50%;
+    animation:shadowPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes shadowPulse{
+    0%,100%{transform:translateX(-50%) scaleX(1);opacity:.5}
+    50%{transform:translateX(-50%) scaleX(.68);opacity:.18}
+  }
+  .m-body{
+    width:106px;height:106px;
+    background:radial-gradient(circle at 35% 35%,#ffe870 0%,var(--yellow) 65%);
+    border-radius:50%;
+    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    box-shadow:0 8px 0 #c9a800,0 12px 28px rgba(255,217,61,.4);
+  }
+  .m-ears{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:106px}
+  .m-ear{
+    position:absolute;width:23px;height:34px;
+    background:radial-gradient(circle at 40% 30%,#ffe870 0%,var(--yellow) 65%);
+    border-radius:50% 50% 0 0;box-shadow:0 -4px 0 #c9a800;
+  }
+  .m-ear.l{left:7px;transform:rotate(-20deg)}
+  .m-ear.r{right:7px;transform:rotate(20deg)}
+  .m-ear-in{
+    position:absolute;width:11px;height:18px;
+    background:var(--pink);border-radius:50% 50% 0 0;
+    left:50%;top:6px;transform:translateX(-50%);opacity:.55;
+  }
+  .m-eye{
+    position:absolute;background:var(--dark);
+    border-radius:50%;width:14px;height:16px;top:29px;
+    transition:transform .15s,border-radius .15s;
+  }
+  .m-eye.l{left:23px}.m-eye.r{right:23px}
+  .m-eye.happy{transform:scaleY(.3);border-radius:50% 50% 0 0}
+  .m-shine{width:5px;height:6px;background:white;border-radius:50%;position:absolute;top:2px;left:3px}
+  .m-blush{
+    position:absolute;width:17px;height:10px;
+    background:var(--pink);border-radius:50%;opacity:.5;bottom:30px;
+    animation:blushP 3s ease-in-out infinite;
+  }
+  @keyframes blushP{0%,100%{opacity:.5}50%{opacity:.8}}
+  .m-blush.l{left:11px}.m-blush.r{right:11px}
+  .m-mouth{
+    position:absolute;bottom:23px;left:50%;transform:translateX(-50%);
+    width:42px;height:21px;background:var(--orange);
+    border-radius:0 0 22px 22px;overflow:hidden;
+  }
+  .m-mouth::after{
+    content:'';position:absolute;top:0;left:0;right:0;
+    height:6px;background:rgba(255,255,255,.22);
+  }
+  .m-tongue{
+    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+    width:22px;height:13px;background:#ff9999;
+    border-radius:50% 50% 0 0;
+    animation:tongueP 3.5s ease-in-out infinite;
+  }
+  @keyframes tongueP{0%,65%,100%{transform:translateX(-50%) translateY(13px)}80%,92%{transform:translateX(-50%) translateY(1px)}}
+
+  /* 吹き出し */
+  .speech{
+    position:absolute;top:-8px;right:-94px;
+    background:white;border-radius:20px 20px 20px 6px;
+    padding:7px 13px;font-size:.78rem;color:var(--dark);font-weight:700;
+    box-shadow:0 4px 14px rgba(100,150,255,.2);white-space:nowrap;
+    animation:bubPop .6s .9s cubic-bezier(.34,1.56,.64,1) both;
+    line-height:1.55;
+  }
+  @keyframes bubPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* ===== タイトル ===== */
+  .title-ja{
+    font-size:clamp(2rem,8vw,2.8rem);font-weight:900;
+    letter-spacing:.05em;line-height:1.1;
+  }
+  .tc{display:inline-block;animation:tdance 2.2s ease-in-out infinite;text-shadow:3px 3px 0 rgba(0,0,0,.1)}
+  .tc:nth-child(1){color:var(--orange);animation-delay:0s}
+  .tc:nth-child(2){color:var(--yellow);animation-delay:.08s}
+  .tc:nth-child(3){color:var(--green); animation-delay:.16s}
+  .tc:nth-child(4){color:var(--blue);  animation-delay:.24s}
+  .tc:nth-child(5){color:var(--purple);animation-delay:.32s}
+  .tc:nth-child(6){color:var(--pink);  animation-delay:.40s}
+  .tc:nth-child(7){color:var(--orange);animation-delay:.48s}
+  .tc:nth-child(8){color:var(--yellow);animation-delay:.56s}
+  @keyframes tdance{
+    0%,100%{transform:translateY(0) rotate(0)}
+    30%{transform:translateY(-10px) rotate(-4deg)}
+    60%{transform:translateY(-6px) rotate(3deg)}
+  }
+  .subtitle{font-size:.87rem;color:#9ab0c8;letter-spacing:.18em;margin-top:.4rem}
+
+  /* ===== バッジ ===== */
+  .badges{display:flex;justify-content:center;flex-wrap:wrap;gap:.38rem;margin:.85rem 0 1.1rem}
+  .badge{
+    font-size:.76rem;padding:.3rem .8rem;border-radius:50px;
+    color:white;font-weight:700;letter-spacing:.04em;
+    animation:badgePop .5s cubic-bezier(.34,1.56,.64,1) both;
+    cursor:default;transition:transform .15s;
+  }
+  .badge:hover{transform:scale(1.14) rotate(-3deg)}
+  .badge:nth-child(1){background:var(--green); box-shadow:0 3px 0 #4aa855;animation-delay:.2s}
+  .badge:nth-child(2){background:var(--orange);box-shadow:0 3px 0 #c94040;animation-delay:.3s}
+  .badge:nth-child(3){background:var(--pink);  box-shadow:0 3px 0 #cc6ea0;animation-delay:.4s}
+  .badge:nth-child(4){background:var(--purple);box-shadow:0 3px 0 #9945d4;animation-delay:.5s}
+  .badge:nth-child(5){background:var(--blue);  box-shadow:0 3px 0 #2a70e0;animation-delay:.6s}
+  .badge:nth-child(6){background:var(--dark);  box-shadow:0 3px 0 #22224a;animation-delay:.7s}
+  @keyframes badgePop{
+    from{transform:scale(0) rotate(-12deg);opacity:0}
+    to{transform:scale(1) rotate(0);opacity:1}
+  }
+
+  /* ===== スタートボタン ===== */
+  .start-btn{
+    display:block;width:100%;
+    font-family:'Zen Maru Gothic',sans-serif;
+    font-size:1.45rem;font-weight:900;color:white;
+    background:linear-gradient(135deg,#ff7c7c 0%,#ff5500 100%);
+    border:none;border-radius:50px;
+    padding:1rem 2rem;cursor:pointer;
+    box-shadow:0 8px 0 #c94040,0 14px 36px rgba(255,107,107,.45),inset 0 2px 0 rgba(255,255,255,.28);
+    letter-spacing:.12em;transition:all .15s;
+    animation:btnGlow 2s ease-in-out infinite alternate,btnAppear .9s .4s cubic-bezier(.34,1.56,.64,1) both;
+    position:relative;overflow:hidden;
+  }
+  .start-btn::after{
+    content:'';position:absolute;top:0;left:-100%;
+    width:55%;height:100%;background:rgba(255,255,255,.28);
+    transform:skewX(-22deg);
+    animation:btnShine 2.5s 1.5s ease-in-out infinite;
+  }
+  @keyframes btnShine{0%{left:-100%}40%{left:150%}100%{left:150%}}
+  @keyframes btnGlow{
+    from{box-shadow:0 8px 0 #c94040,0 12px 22px rgba(255,107,107,.3)}
+    to{box-shadow:0 8px 0 #c94040,0 20px 50px rgba(255,107,107,.65)}
+  }
+  @keyframes btnAppear{
+    from{transform:scale(.4) translateY(30px);opacity:0}
+    to{transform:scale(1) translateY(0);opacity:1}
+  }
+  .start-btn:hover{transform:translateY(-5px) scale(1.03);box-shadow:0 13px 0 #c94040,0 22px 50px rgba(255,107,107,.6)}
+  .start-btn:active{transform:translateY(5px) scale(.98);box-shadow:0 3px 0 #c94040}
+
+  .footer-note{margin-top:.85rem;font-size:.72rem;color:#b0c4d8;letter-spacing:.07em}
+
+  /* 飛び出し絵文字 */
+  .epop{
+    position:fixed;pointer-events:none;z-index:999;
+    animation:epopAnim 1.2s ease-out forwards;user-select:none;
+  }
+  @keyframes epopAnim{
+    0%{transform:translateY(0) scale(.5);opacity:1}
+    100%{transform:translateY(-110px) scale(1.6);opacity:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grad"></div>
+<div class="bubbles" id="bubbles"></div>
+<div id="sparkles"></div>
+
+<div class="card">
+  <div class="deco da"></div>
+  <div class="deco db"></div>
+  <div class="deco dc"></div>
+  <div class="deco dd"></div>
+
+  <!-- マスコット -->
+  <div class="mas-wrap">
+    <div class="mascot" id="mascot" onclick="pokeMascot()">
+      <div class="m-ears">
+        <div class="m-ear l"><div class="m-ear-in"></div></div>
+        <div class="m-ear r"><div class="m-ear-in"></div></div>
+      </div>
+      <div class="m-body">
+        <div class="m-eye l" id="eyeL"><div class="m-shine"></div></div>
+        <div class="m-eye r" id="eyeR"><div class="m-shine"></div></div>
+        <div class="m-blush l"></div>
+        <div class="m-blush r"></div>
+        <div class="m-mouth"><div class="m-tongue"></div></div>
+      </div>
+    </div>
+    <div class="mas-shadow"></div>
+    <div class="speech" id="speech">いっしょに<br>れんしゅうしよう！🌟</div>
+  </div>
+
+  <!-- タイトル -->
+  <div style="margin-bottom:.5rem">
+    <div class="title-ja">
+      <span class="tc">は</span><span class="tc">な</span><span class="tc">し</span><span class="tc">て</span><span class="tc">み</span><span class="tc">よ</span><span class="tc">う</span><span class="tc">！</span>
+    </div>
+    <div class="subtitle">ことばをれんしゅうしよう 🎤</div>
+  </div>
+
+  <!-- バッジ -->
+  <div class="badges">
+    <div class="badge">🐾 どうぶつ</div>
+    <div class="badge">🍎 たべもの</div>
+    <div class="badge">👨‍👩‍👧 かぞく</div>
+    <div class="badge">🎨 いろ・かず</div>
+    <div class="badge">🧹 さぎょう</div>
+    <div class="badge">✏️ じぶんで</div>
+  </div>
+
+  <!-- スタートボタン -->
+  <button class="start-btn" id="startBtn" onclick="goStart()">
+    🎤 はじめる！
+  </button>
+
+  <div class="footer-note">🔒 マイクのきょかがひつようです</div>
+</div>
+
+<script>
+// ===== 効果音 =====
+let _ac = null;
+function ac() {
+  if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+  if (_ac.state === 'suspended') _ac.resume().catch(()=>{});
+  return _ac;
+}
+function beep(freq, dur, type, vol, delay) {
+  type=type||'sine'; vol=vol||0.28; delay=delay||0;
+  try {
+    const ctx = ac();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = type;
+    o.frequency.setValueAtTime(freq, ctx.currentTime+delay);
+    g.gain.setValueAtTime(0, ctx.currentTime+delay);
+    g.gain.linearRampToValueAtTime(vol, ctx.currentTime+delay+0.012);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+delay+dur);
+    o.start(ctx.currentTime+delay);
+    o.stop(ctx.currentTime+delay+dur+0.05);
+  } catch(e) {}
+}
+
+// ページ入場音「ふわ〜ん♪」
+function soundWelcome() {
+  [523,659,784,1047].forEach((f,i) => beep(f, i===3?0.4:0.18, 'sine', 0.18, i*0.13));
+}
+// マスコットポーク「ぽわん」
+function soundPoke() {
+  beep(880, 0.07, 'sine', 0.22);
+  beep(1320, 0.22, 'sine', 0.18, 0.07);
+}
+// ホバー「ぴっ」
+function soundHover() {
+  beep(1100, 0.07, 'sine', 0.12);
+}
+// スタート「じゃじゃーん！」
+function soundStart() {
+  [523,659,784,1047,1319].forEach((f,i) => beep(f, i>=3?0.4:0.1, 'sine', 0.32, i*0.09));
+}
+
+// ===== 泡 =====
+function buildBubbles() {
+  const wrap = document.getElementById('bubbles');
+  const cols = ['#FFD93D','#FF6B6B','#6BCB77','#4D96FF','#C77DFF','#FF9ECD'];
+  for (let i=0;i<22;i++) {
+    const b = document.createElement('div');
+    b.className = 'bub';
+    const sz = 16 + Math.random()*48;
+    const col = cols[i%cols.length];
+    b.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;
+      background:${col}28;border:2px solid ${col}44;
+      animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*12}s`;
+    wrap.appendChild(b);
+  }
+}
+
+// ===== きらきら =====
+function buildSparkles() {
+  const wrap = document.getElementById('sparkles');
+  const icons = ['✨','⭐','🌟','💫','🎀','🎵','💕','🎶'];
+  for (let i=0;i<16;i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.textContent = icons[i%icons.length];
+    s.style.cssText = `left:${5+Math.random()*90}%;top:${5+Math.random()*90}%;
+      font-size:${0.85+Math.random()*1.1}rem;
+      animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*3.5}s`;
+    wrap.appendChild(s);
+  }
+}
+
+// ===== マスコットつつく =====
+const bubTexts = [
+  'がんばれ〜！🌈','いっしょに\nれんしゅう！💪','やってみよう！🎵',
+  'たのしいよ！🐾','えらい！えらい！⭐','きみならできる！🌟','わくわく！🎉'
+];
+let bubIdx = 0, poking = false;
+
+function pokeMascot() {
+  if (poking) return;
+  poking = true;
+  soundPoke();
+
+  const m = document.getElementById('mascot');
+  const eL = document.getElementById('eyeL');
+  const eR = document.getElementById('eyeR');
+  const sp = document.getElementById('speech');
+
+  eL.classList.add('happy'); eR.classList.add('happy');
+  m.style.cssText = 'animation:none;transform:scale(1.18) rotate(6deg)';
+
+  bubIdx = (bubIdx+1) % bubTexts.length;
+  sp.style.animation = 'none';
+  sp.textContent = '';
+  setTimeout(() => {
+    sp.textContent = bubTexts[bubIdx];
+    sp.style.animation = 'bubPop .4s cubic-bezier(.34,1.56,.64,1)';
+  }, 10);
+
+  spawnEmoji(m, ['💕','✨','⭐','🎵','🌟'][Math.floor(Math.random()*5)]);
+
+  setTimeout(() => {
+    eL.classList.remove('happy'); eR.classList.remove('happy');
+    m.style.cssText = '';
+    poking = false;
+  }, 750);
+}
+
+// ===== 絵文字ポップ =====
+function spawnEmoji(el, emoji, x, y) {
+  const e = document.createElement('div');
+  e.className = 'epop';
+  e.textContent = emoji;
+  if (el) {
+    const r = el.getBoundingClientRect();
+    e.style.left = (r.left + r.width/2 - 16 + (Math.random()-.5)*50) + 'px';
+    e.style.top  = (r.top  + r.height/2) + 'px';
+  } else {
+    e.style.left = x+'px'; e.style.top = y+'px';
+  }
+  e.style.fontSize = (1.4+Math.random()*.8)+'rem';
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(), 1300);
+}
+
+// ===== スタート =====
+function goStart() {
+  soundStart();
+  const btn = document.getElementById('startBtn');
+  btn.textContent = '🚀 しゅっぱつ！';
+  btn.style.transform = 'scale(1.1)';
+  btn.disabled = true;
+
+  const emojis = ['🎉','⭐','✨','🎵','🎀','💕','🌟'];
+  emojis.forEach((em,i) => setTimeout(()=>{
+    spawnEmoji(null, em,
+      80+Math.random()*(window.innerWidth-160),
+      window.innerHeight*.5+(Math.random()-.5)*120
+    );
+  }, i*55));
+
+  setTimeout(()=>{ window.location.href='hanashite_miyou_se.html'; }, 520);
+}
+
+// ===== ホバー音 =====
+let hov = false;
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('startBtn');
+  btn.addEventListener('mouseenter', ()=>{ if(!hov){ soundHover(); hov=true; }});
+  btn.addEventListener('mouseleave', ()=>{ hov=false; });
+});
+
+buildBubbles();
+buildSparkles();
+setTimeout(soundWelcome, 700);
+</script>
+</body>
+</html>
