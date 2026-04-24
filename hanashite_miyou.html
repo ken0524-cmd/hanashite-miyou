@@ -34,10 +34,30 @@
   .subtitle{font-size:.83rem;color:#7a8eab;margin-top:.2rem;letter-spacing:.1em}
 
   /* MASCOT */
-  .mascot-wrap{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;margin:.3rem 0 0}
-  .mascot-svg-wrap{display:inline-block;animation:mascotBob 2.5s ease-in-out infinite}
-  @keyframes mascotBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .mascot-wrap{position:relative;z-index:1;display:flex;justify-content:center;margin:.3rem 0 0}
+  .mascot{position:relative;width:110px;height:110px}
+  .mascot-body{width:90px;height:90px;background:var(--yellow);border-radius:50%;position:absolute;bottom:0;left:50%;transform:translateX(-50%);box-shadow:0 6px 0 #e0b800,0 8px 20px rgba(255,217,61,.4);animation:mascotBob 2.5s ease-in-out infinite}
+  @keyframes mascotBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+  .mascot-eye{position:absolute;background:var(--dark);border-radius:50%}
+  .eye-l{width:12px;height:14px;top:28px;left:20px}.eye-r{width:12px;height:14px;top:28px;right:20px}
+  .mascot-shine{position:absolute;width:4px;height:4px;background:white;border-radius:50%;top:3px;left:2px}
+  .mascot-mouth{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:36px;height:18px;border-radius:0 0 18px 18px;background:var(--orange);overflow:hidden;transition:all .3s}
+  .mascot-mouth.talking{animation:mouthTalk .3s ease-in-out infinite alternate}
+  @keyframes mouthTalk{from{height:10px}to{height:24px}}
+  .mascot-blush{position:absolute;width:14px;height:8px;background:var(--pink);border-radius:50%;opacity:.6}
+  .blush-l{bottom:28px;left:10px}.blush-r{bottom:28px;right:10px}
+  .mascot-ears{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:90px}
+  .ear{position:absolute;width:18px;height:28px;background:var(--yellow);border-radius:50% 50% 0 0;box-shadow:0 -3px 0 #e0b800}
+  .ear-l{left:8px;transform:rotate(-15deg)}.ear-r{right:8px;transform:rotate(15deg)}
   .bubble{position:absolute;top:0;right:-72px;background:white;border-radius:16px 16px 16px 4px;padding:6px 12px;font-size:.78rem;color:var(--dark);box-shadow:0 4px 12px var(--shadow);white-space:nowrap;transition:all .3s}
+
+  /* さ行レベルパネル */
+  #saPanel{background:white;border-radius:24px;padding:.8rem 1rem;box-shadow:0 6px 0 #c5d8ef;margin-bottom:.8rem}
+  #saPanel .sa-title{font-size:.75rem;color:#a0b0c8;letter-spacing:.1em;margin-bottom:.5rem}
+  .sa-levels{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
+  .sa-btn{font-family:'Kosugi Maru',sans-serif;font-size:.78rem;padding:.35rem .8rem;border-radius:50px;border:3px solid #c5d8ef;background:white;color:#7a8eab;cursor:pointer;font-weight:700;transition:all .15s;box-shadow:0 3px 0 #c5d8ef}
+  .sa-btn:hover{transform:translateY(-2px)}
+  .sa-btn.active{background:#e67e22;border-color:#e67e22;color:white;box-shadow:0 3px 0 #b9620e}
 
   /* MAIN */
   .main{position:relative;z-index:1;padding:0 1rem;max-width:520px;margin:.7rem auto 0}
@@ -116,6 +136,15 @@
   .next-btn:hover{transform:translateY(-2px)}
   .next-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2a70e0}
 
+  /* MIC LEVEL BAR */
+  .mic-wrap{width:100%;max-width:260px;margin:.1rem auto 0;display:none;flex-direction:column;align-items:center;gap:.3rem}
+  .mic-wrap-label{font-size:.72rem;color:#7a8eab;font-weight:700}
+  .mic-bar-bg{width:100%;height:20px;background:#e8f4fd;border-radius:20px;overflow:hidden;border:2px solid #c5d8ef}
+  .mic-bar{height:100%;width:0%;border-radius:20px;background:linear-gradient(90deg,var(--green),#4D96FF);transition:width .08s ease-out}
+  .mic-bar.warn{background:linear-gradient(90deg,var(--yellow),var(--orange))}
+  .mic-bar.loud{background:linear-gradient(90deg,var(--orange),#c94040)}
+  .mic-msg{font-size:.7rem;font-weight:700;margin-top:.1rem}
+
   /* RESULT */
   .result-card{background:white;border-radius:28px;padding:1.4rem;box-shadow:0 8px 0 #c5d8ef,0 12px 30px var(--shadow);text-align:center;display:none;animation:resultPop .4s cubic-bezier(.34,1.56,.64,1)}
   @keyframes resultPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
@@ -171,20 +200,18 @@
 
 <!-- マスコット -->
 <div class="mascot-wrap">
-  <div class="mascot-svg-wrap" id="mascotSvgWrap">
-    <svg id="gyozaSvg" width="120" height="100" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="70" cy="72" rx="58" ry="42" fill="#f5f0e8" stroke="#2a2a2a" stroke-width="3"/>
-      <path d="M 44 35 Q 50 24 57 30 Q 63 20 70 28 Q 77 20 84 30 Q 91 24 97 35" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
-      <ellipse cx="50" cy="62" rx="13" ry="16" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
-      <ellipse cx="90" cy="62" rx="13" ry="16" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
-      <ellipse cx="56" cy="64" rx="8" ry="10" fill="#6b4c2a" opacity="0.75"/>
-      <ellipse cx="84" cy="64" rx="8" ry="10" fill="#6b4c2a" opacity="0.75"/>
-      <ellipse cx="53" cy="60" rx="3" ry="3.5" fill="white" opacity="0.9"/>
-      <ellipse cx="81" cy="60" rx="3" ry="3.5" fill="white" opacity="0.9"/>
-      <ellipse cx="30" cy="78" rx="10" ry="6" fill="#FF9ECD" opacity="0.6"/>
-      <ellipse cx="110" cy="78" rx="10" ry="6" fill="#FF9ECD" opacity="0.6"/>
-      <path id="gyoza-mouth" d="M 58 92 Q 70 100 82 92" fill="none" stroke="#2a2a2a" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>
+  <div class="mascot">
+    <div class="mascot-ears">
+      <div class="ear ear-l"></div>
+      <div class="ear ear-r"></div>
+    </div>
+    <div class="mascot-body">
+      <div class="mascot-eye eye-l"><div class="mascot-shine"></div></div>
+      <div class="mascot-eye eye-r"><div class="mascot-shine"></div></div>
+      <div class="mascot-blush blush-l"></div>
+      <div class="mascot-blush blush-r"></div>
+      <div class="mascot-mouth" id="mascotMouth"></div>
+    </div>
   </div>
   <div class="bubble" id="mascotBubble">いっしょにれんしゅうしよう！</div>
 </div>
@@ -221,6 +248,23 @@
     <div id="customList" style="display:flex;flex-wrap:wrap;gap:.4rem;min-height:28px"></div>
   </div>
 
+  <!-- さ行レベル選択パネル -->
+  <div id="saPanel" style="display:none">
+    <div class="sa-title">▼ レベルをえらぼう</div>
+    <div class="sa-levels">
+      <button class="sa-btn active" data-level="1">Lv.1 一語</button>
+      <button class="sa-btn" data-level="2">Lv.2 二語</button>
+      <button class="sa-btn" data-level="3">Lv.3 三語（語頭）</button>
+      <button class="sa-btn" data-level="4">Lv.4 三語（語中）</button>
+      <button class="sa-btn" data-level="5">Lv.5 三語（語尾）</button>
+      <button class="sa-btn" data-level="6">Lv.6 四語（語頭）</button>
+      <button class="sa-btn" data-level="7">Lv.7 四語（語中）</button>
+      <button class="sa-btn" data-level="8">Lv.8 四語（語尾）</button>
+      <button class="sa-btn" data-level="9">Lv.9 五語以上①</button>
+      <button class="sa-btn" data-level="10">Lv.10 五語以上②</button>
+    </div>
+  </div>
+
   <!-- お題カード -->
   <div class="prompt-card">
     <div class="prompt-label">▼ これをいってみよう！</div>
@@ -248,6 +292,14 @@
       <button class="rec-btn b-wait" id="recBtn" onclick="handleRecBtn()">🎤</button>
     </div>
     <div class="rec-label" id="recLabel">おしてはなす</div>
+    <!-- マイク音量バー -->
+    <div class="mic-wrap" id="micWrap">
+      <div class="mic-wrap-label">🎙️ マイクのおんりょう</div>
+      <div class="mic-bar-bg">
+        <div class="mic-bar" id="micBar"></div>
+      </div>
+      <div class="mic-msg" id="micMsg" style="color:#a0b0c8">はなしてね…</div>
+    </div>
     <button class="next-btn" id="nextBtn" onclick="nextPrompt()">➡️ つぎのことば</button>
   </div>
 
@@ -321,8 +373,77 @@ const PROMPTS = {
     {emoji:"5️⃣", text:"ご",         keys:["ご","五","5"]},
   ],
   "カスタム": [],
+  "さ行-1": [
+    {emoji:"🔤", text:"さ", keys:["さ"]},
+    {emoji:"🔤", text:"し", keys:["し"]},
+    {emoji:"🔤", text:"す", keys:["す"]},
+    {emoji:"🔤", text:"せ", keys:["せ"]},
+    {emoji:"🔤", text:"そ", keys:["そ"]},
+  ],
+  "さ行-2": [
+    {emoji:"🦈", text:"さめ",  keys:["さめ","鮫"]},
+    {emoji:"🦌", text:"しか",  keys:["しか","鹿"]},
+    {emoji:"❤️", text:"すき",  keys:["すき","好き"]},
+    {emoji:"🦗", text:"せみ",  keys:["せみ","蝉"]},
+    {emoji:"🚪", text:"そと",  keys:["そと","外"]},
+  ],
+  "さ行-3": [
+    {emoji:"🐟", text:"さかな",  keys:["さかな","魚"]},
+    {emoji:"🔲", text:"しかく",  keys:["しかく","四角"]},
+    {emoji:"🔢", text:"すうじ",  keys:["すうじ","数字"]},
+    {emoji:"🧍", text:"せなか",  keys:["せなか","背中"]},
+    {emoji:"🧹", text:"そうじ",  keys:["そうじ","掃除"]},
+  ],
+  "さ行-4": [
+    {emoji:"✂️", text:"はさみ",  keys:["はさみ","鋏"]},
+    {emoji:"🌀", text:"ふしぎ",  keys:["ふしぎ","不思議"]},
+    {emoji:"😷", text:"ますく",  keys:["ますく","マスク"]},
+    {emoji:"🍂", text:"きせつ",  keys:["きせつ","季節"]},
+    {emoji:"🎮", text:"あそび",  keys:["あそび","遊び"]},
+  ],
+  "さ行-5": [
+    {emoji:"🕊️", text:"つばさ",  keys:["つばさ","翼"]},
+    {emoji:"💬", text:"はなし",  keys:["はなし","話"]},
+    {emoji:"💃", text:"だんす",  keys:["だんす","ダンス"]},
+    {emoji:"🔬", text:"はかせ",  keys:["はかせ","博士"]},
+    {emoji:"🌿", text:"さんぞ",  keys:["さんぞ"]},
+  ],
+  "さ行-6": [
+    {emoji:"🔺", text:"さんかく",  keys:["さんかく","三角"]},
+    {emoji:"🦓", text:"しまうま",  keys:["しまうま","縞馬"]},
+    {emoji:"⛸️", text:"すけーと",  keys:["すけーと","スケート"]},
+    {emoji:"👩‍🏫", text:"せんせい",  keys:["せんせい","先生"]},
+    {emoji:"🌬️", text:"そよかぜ",  keys:["そよかぜ","そよ風"]},
+  ],
+  "さ行-7": [
+    {emoji:"🏡", text:"ふるさと",  keys:["ふるさと","故郷"]},
+    {emoji:"🧦", text:"くつした",  keys:["くつした","靴下"]},
+    {emoji:"💊", text:"めぐすり",  keys:["めぐすり","目薬"]},
+    {emoji:"💝", text:"しんせつ",  keys:["しんせつ","親切"]},
+    {emoji:"🤝", text:"やくそく",  keys:["やくそく","約束"]},
+  ],
+  "さ行-8": [
+    {emoji:"🌿", text:"ななくさ",  keys:["ななくさ","七草"]},
+    {emoji:"😄", text:"たのしい",  keys:["たのしい","楽しい"]},
+    {emoji:"🎪", text:"さーかす",  keys:["さーかす","サーカス"]},
+    {emoji:"🍀", text:"しあわせ",  keys:["しあわせ","幸せ"]},
+    {emoji:"🎼", text:"がっそう",  keys:["がっそう","合奏"]},
+  ],
+  "さ行-9": [
+    {emoji:"🥪", text:"さんどいっち",    keys:["さんどいっち","サンドイッチ"]},
+    {emoji:"📰", text:"しんぶんし",      keys:["しんぶんし","新聞紙"]},
+    {emoji:"🐠", text:"すいぞくかん",    keys:["すいぞくかん","水族館"]},
+    {emoji:"🚄", text:"しんかんせん",    keys:["しんかんせん","新幹線"]},
+    {emoji:"🎓", text:"そつぎょうしき",  keys:["そつぎょうしき","卒業式"]},
+  ],
+  "さ行-10": [
+    {emoji:"🎵", text:"こんさーと",      keys:["こんさーと","コンサート"]},
+    {emoji:"😋", text:"くいしんぼう",    keys:["くいしんぼう","食いしん坊"]},
+    {emoji:"🍦", text:"あいすくりーむ",  keys:["あいすくりーむ","アイスクリーム"]},
+    {emoji:"🦐", text:"えびせんべい",    keys:["えびせんべい","海老煎餅"]},
+    {emoji:"🙏", text:"ごちそうさま",    keys:["ごちそうさま","ご馳走様"]},
+  ],
 };
-
 // =====================
 // 状態
 // =====================
@@ -403,15 +524,43 @@ function setupRecognition() {
 // カテゴリ
 // =====================
 function setupTabs() {
+  let currentSaLevel = 1;
+
+  // さ行レベルボタンのセットアップ
+  document.querySelectorAll(".sa-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".sa-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentSaLevel = parseInt(btn.dataset.level);
+      currentCat = "さ行-" + currentSaLevel;
+      shuffle(PROMPTS[currentCat]);
+      currentIndex = 0;
+      resetState();
+      showPrompt();
+    });
+  });
+
   document.querySelectorAll(".cat-tab").forEach(tab => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".cat-tab").forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
-      currentCat = tab.dataset.cat;
+      const cat = tab.dataset.cat;
+      const saPanel = document.getElementById("saPanel");
+      const customPanel = document.getElementById("customPanel");
+
+      if (cat === "さ行") {
+        saPanel.style.display = "block";
+        customPanel.style.display = "none";
+        currentCat = "さ行-" + currentSaLevel;
+      } else {
+        saPanel.style.display = "none";
+        customPanel.style.display = cat === "カスタム" ? "block" : "none";
+        currentCat = cat;
+      }
+
       if (currentCat !== "カスタム") shuffle(PROMPTS[currentCat]);
       currentIndex = 0;
       resetState();
-      document.getElementById("customPanel").style.display = currentCat === "カスタム" ? "block" : "none";
       showPrompt();
     });
   });
@@ -444,8 +593,8 @@ function showPrompt() {
 
 function nextPrompt() {
   currentIndex++;
-  if (currentIndex >= PROMPTS[currentCat].length) {
-    shuffle(PROMPTS[currentCat]);
+  if (!PROMPTS[currentCat] || currentIndex >= PROMPTS[currentCat].length) {
+    if (PROMPTS[currentCat]) shuffle(PROMPTS[currentCat]);
     currentIndex = 0;
   }
   showPrompt();
@@ -495,11 +644,73 @@ function updateCountdown(n) {
   document.getElementById("stateSub").textContent = "もうすこし！";
 }
 
+// =====================
+// マイク音量バー
+// =====================
+let audioCtx = null, analyser = null, micStream = null, levelTimer = null;
+
+function startMicLevel() {
+  const wrap = document.getElementById("micWrap");
+  const bar  = document.getElementById("micBar");
+  const msg  = document.getElementById("micMsg");
+  wrap.style.display = "flex";
+  bar.style.width = "0%";
+
+  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+    .then(stream => {
+      micStream = stream;
+      audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+      analyser  = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      audioCtx.createMediaStreamSource(stream).connect(analyser);
+      const data = new Uint8Array(analyser.frequencyBinCount);
+
+      levelTimer = setInterval(() => {
+        analyser.getByteFrequencyData(data);
+        const avg = data.reduce((a, b) => a + b, 0) / data.length;
+        const pct = Math.min(100, avg * 2.8);
+        bar.style.width = pct + "%";
+
+        if (pct > 65) {
+          bar.className = "mic-bar loud";
+          msg.textContent = "🔊 よくきこえてるよ！";
+          msg.style.color = "var(--orange)";
+        } else if (pct > 20) {
+          bar.className = "mic-bar warn";
+          msg.textContent = "👂 きこえてるよ！";
+          msg.style.color = "var(--green)";
+        } else {
+          bar.className = "mic-bar";
+          msg.textContent = "📢 もっとおおきくはなしてね…";
+          msg.style.color = "#a0b0c8";
+        }
+      }, 80);
+    })
+    .catch(err => {
+      console.warn("マイクレベル取得失敗:", err);
+      msg.textContent = "⚠️ マイクがよめません";
+      msg.style.color = "var(--orange)";
+    });
+}
+
+function stopMicLevel() {
+  clearInterval(levelTimer); levelTimer = null;
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  if (audioCtx)  { audioCtx.close(); audioCtx = null; }
+  const wrap = document.getElementById("micWrap");
+  const bar  = document.getElementById("micBar");
+  if (wrap) wrap.style.display = "none";
+  if (bar)  bar.style.width = "0%";
+}
+
 function startListening() {
   clearInterval(cdTimer);
   setState("go");
   document.getElementById("cdDots").style.display = "none";
   setBubble("はなしてね！🎤");
+
+  // マイクレベルバー開始
+  startMicLevel();
 
   // recognition を毎回新しく作り直す（使い回しによるバグを防ぐ）
   setupRecognition();
@@ -517,6 +728,7 @@ function startListening() {
 function stopRecording() {
   clearTimeout(recTimer);
   if (state !== "go") return;
+  stopMicLevel();
   if (recognition) {
     try { recognition.stop(); } catch(e) {}
   }
@@ -593,11 +805,8 @@ function speakFeedback(correct, word) {
   if (!speechSynth) return;
   speechSynth.cancel();
 
-  const gyozaMouth = document.getElementById("gyoza-mouth");
-  let talkInterval = setInterval(() => {
-    gyozaMouth.setAttribute("d", "M 55 90 Q 70 104 85 90");
-    setTimeout(() => gyozaMouth.setAttribute("d", "M 58 92 Q 70 100 82 92"), 150);
-  }, 300);
+  const mouth = document.getElementById("mascotMouth");
+  mouth.classList.add("talking");
 
   let text = correct
     ? `${word}！ よくできました！ すごいね！`
@@ -608,8 +817,8 @@ function speakFeedback(correct, word) {
   utt.rate = 0.85;
   utt.pitch = 1.3;
 
-  utt.onend = () => { clearInterval(talkInterval); gyozaMouth.setAttribute("d", "M 58 92 Q 70 100 82 92"); };
-  utt.onerror = () => { clearInterval(talkInterval); gyozaMouth.setAttribute("d", "M 58 92 Q 70 100 82 92"); };
+  utt.onend = () => { mouth.classList.remove("talking"); };
+  utt.onerror = () => { mouth.classList.remove("talking"); };
 
   speechSynth.speak(utt);
 }
@@ -679,6 +888,7 @@ function setState(s) {
 function resetState() {
   clearInterval(cdTimer);
   clearTimeout(recTimer);
+  stopMicLevel();
   if (recognition) { try { recognition.abort(); } catch(e) {} }
   setState("wait");
   document.getElementById("cdDots").style.display = "none";
