@@ -41,6 +41,9 @@
   @keyframes mouthTalkSVG{from{d:path('M56,80 Q65,82 74,80')}to{d:path('M54,79 Q65,92 76,79')}}
   .mascot-mouth{display:none} /* SVG内で管理 */
   .bubble{position:absolute;top:0;right:-76px;background:white;border-radius:16px 16px 16px 4px;padding:6px 12px;font-size:.78rem;color:var(--dark);box-shadow:0 4px 12px var(--shadow);white-space:nowrap;transition:all .3s}
+  .back-btn{display:block;width:100%;font-family:'Kosugi Maru',sans-serif;font-size:.9rem;font-weight:700;color:#7a8eab;background:white;border:3px solid #c5d8ef;border-radius:50px;padding:.7rem;cursor:pointer;box-shadow:0 4px 0 #c5d8ef;text-align:center;margin-top:.6rem;text-decoration:none;transition:all .15s}
+  .back-btn:hover{transform:translateY(-2px)}
+  .back-btn:active{transform:translateY(2px)}
 
   /* さ行レベルパネル */
   #saPanel{background:white;border-radius:24px;padding:.8rem 1rem;box-shadow:0 6px 0 #c5d8ef;margin-bottom:.8rem}
@@ -1024,5 +1027,10 @@ function removeCustomWord(el) {
 // =====================
 init();
 </script>
+
+<div style="position:relative;z-index:1;padding:0 1rem;max-width:520px;margin:.4rem auto 1.5rem">
+  <a href="kiroku.html" class="back-btn">📅 きろくをみる</a>
+</div>
+
 </body>
 </html>
