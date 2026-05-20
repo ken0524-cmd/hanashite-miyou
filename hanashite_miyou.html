@@ -1138,7 +1138,7 @@ function finishRecording(heard) {
 
   showResult(heard, matched);
   speakFeedback(matched, prompt.text);
-  autoSaveRecord(matched);
+  autoSaveRecord(matched, prompt);
 }
 
 // =====================
@@ -1163,10 +1163,18 @@ function todayStr() {
 let sessionCorrect = 0;
 let sessionTotal = 0;
 let sessionStartTime = Date.now();
+let sessionWrongWords = []; // 間違えた単語リスト
 
-function autoSaveRecord(correct) {
+function autoSaveRecord(correct, word) {
   sessionTotal++;
-  if (correct) sessionCorrect++;
+  if (correct) {
+    sessionCorrect++;
+  } else if (word) {
+    // 間違えた単語を記録（重複は除く）
+    if (!sessionWrongWords.find(w => w.text === word.text)) {
+      sessionWrongWords.push({ emoji: word.emoji, text: word.text });
+    }
+  }
 
   const today = todayStr();
   const records = loadRecords();
@@ -1181,7 +1189,8 @@ function autoSaveRecord(correct) {
     correct: sessionCorrect,
     total: sessionTotal,
     stars: stars,
-    memo: ""
+    memo: "",
+    wrongWords: [...sessionWrongWords]
   };
 
   if (idx >= 0) {
@@ -1192,6 +1201,18 @@ function autoSaveRecord(correct) {
     entry.minutes = Math.max(records[idx].minutes || 1, Math.max(1, minutes));
     entry.stars = Math.round((entry.correct / entry.total) * 3);
     entry.memo = records[idx].memo || "";
+    // wrongWordsをマージ（重複除く）
+    const existingWrong = records[idx].wrongWords || [];
+    const merged = [...existingWrong];
+    sessionWrongWords.forEach(w => {
+      if (!merged.find(m => m.text === w.text)) merged.push(w);
+    });
+    // 正解した単語は間違いリストから除く
+    if (correct && word) {
+      const idx2 = merged.findIndex(m => m.text === word.text);
+      if (idx2 >= 0) merged.splice(idx2, 1);
+    }
+    entry.wrongWords = merged;
     records[idx] = entry;
   } else {
     records.push(entry);
