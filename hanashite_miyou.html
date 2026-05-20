@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>はなしてみよう！</title>
 <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
 <style>
@@ -41,9 +43,6 @@
   @keyframes mouthTalkSVG{from{d:path('M56,80 Q65,82 74,80')}to{d:path('M54,79 Q65,92 76,79')}}
   .mascot-mouth{display:none} /* SVG内で管理 */
   .bubble{position:absolute;top:0;right:-76px;background:white;border-radius:16px 16px 16px 4px;padding:6px 12px;font-size:.78rem;color:var(--dark);box-shadow:0 4px 12px var(--shadow);white-space:nowrap;transition:all .3s}
-  .back-btn{display:block;width:100%;font-family:'Kosugi Maru',sans-serif;font-size:.9rem;font-weight:700;color:#7a8eab;background:white;border:3px solid #c5d8ef;border-radius:50px;padding:.7rem;cursor:pointer;box-shadow:0 4px 0 #c5d8ef;text-align:center;margin-top:.6rem;text-decoration:none;transition:all .15s}
-  .back-btn:hover{transform:translateY(-2px)}
-  .back-btn:active{transform:translateY(2px)}
 
   /* さ行レベルパネル */
   #saPanel{background:white;border-radius:24px;padding:.8rem 1rem;box-shadow:0 6px 0 #c5d8ef;margin-bottom:.8rem}
@@ -67,6 +66,40 @@
   .cat-tab[data-cat="いろ・かず"].active{background:var(--purple);box-shadow:0 3px 0 #9945d4}
   .cat-tab[data-cat="カスタム"].active{background:var(--dark);box-shadow:0 3px 0 #22224a}
   .cat-tab[data-cat="さ行"].active{background:#e67e22;box-shadow:0 3px 0 #b9620e}
+  .cat-tab[data-cat="あ行"].active{background:#FF6B6B;box-shadow:0 3px 0 #c94040}
+  .cat-tab[data-cat="か行"].active{background:#FFD93D;box-shadow:0 3px 0 #c9a800;color:var(--dark)}
+  .cat-tab[data-cat="た行"].active{background:#6BCB77;box-shadow:0 3px 0 #4aa855}
+  .cat-tab[data-cat="な行"].active{background:#4D96FF;box-shadow:0 3px 0 #2a70e0}
+  .cat-tab[data-cat="は行"].active{background:#FF9ECD;box-shadow:0 3px 0 #cc6ea0}
+  .cat-tab[data-cat="ま行"].active{background:#C77DFF;box-shadow:0 3px 0 #9945d4}
+  .cat-tab[data-cat="や行"].active{background:#FF6B6B;box-shadow:0 3px 0 #c94040}
+  .cat-tab[data-cat="ら行"].active{background:#6BCB77;box-shadow:0 3px 0 #4aa855}
+  .cat-tab[data-cat="わ行"].active{background:#4D96FF;box-shadow:0 3px 0 #2a70e0}
+
+  /* ===== NEW CAT GRID ===== */
+  .cat-group-label{font-size:.75rem;color:#a0b0c8;font-weight:700;letter-spacing:.1em;margin-bottom:.4rem;text-align:center}
+  .cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-bottom:.2rem}
+  .cat-grid-kana{grid-template-columns:repeat(5,1fr)}
+  .cat-grid-btn{
+    font-family:'Kosugi Maru',sans-serif;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:.15rem;padding:.5rem .2rem;
+    background:white;border:3px solid #e0eaf4;border-radius:16px;
+    cursor:pointer;transition:all .18s;
+    box-shadow:0 4px 0 #d0dde8;
+    font-size:1.3rem;color:#7a8eab;
+  }
+  .cat-grid-btn span{font-size:.65rem;font-weight:700;line-height:1}
+  .cat-grid-btn:hover{transform:translateY(-3px);border-color:var(--c,#4D96FF)}
+  .cat-grid-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #d0dde8}
+  .cat-grid-btn.active{
+    background:var(--c,#4D96FF);
+    border-color:var(--c,#4D96FF);
+    box-shadow:0 4px 0 var(--s,#2a70e0);
+    color:white;
+    transform:translateY(-2px);
+  }
+  .cat-grid-btn.active span{color:white}
 
   /* PROMPT */
   .prompt-card{background:white;border-radius:28px;padding:1.4rem 1.5rem 1.1rem;box-shadow:0 8px 0 #c5d8ef,0 12px 30px var(--shadow);text-align:center;margin-bottom:.8rem;position:relative;overflow:hidden}
@@ -130,6 +163,10 @@
   .next-btn:hover{transform:translateY(-2px)}
   .next-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2a70e0}
 
+  /* KIROKU LINK */
+  .kiroku-link{position:absolute;top:1rem;right:1rem;z-index:10;font-family:'Kosugi Maru',sans-serif;font-size:.78rem;background:white;border:3px solid var(--blue);border-radius:50px;padding:.4rem .9rem;color:var(--blue);cursor:pointer;box-shadow:0 3px 0 #2a70e0;text-decoration:none;font-weight:700;transition:all .15s}
+  .kiroku-link:hover{transform:translateY(-2px)}
+
   /* MIC LEVEL BAR */
   .mic-wrap{width:100%;max-width:260px;margin:.1rem auto 0;display:none;flex-direction:column;align-items:center;gap:.3rem}
   .mic-wrap-label{font-size:.72rem;color:#7a8eab;font-weight:700}
@@ -186,6 +223,7 @@
 
 <!-- ヘッダー -->
 <header>
+  <a class="kiroku-link" href="kiroku.html">📒 きろく</a>
   <div>
     <span class="title-char">は</span><span class="title-char">な</span><span class="title-char">し</span><span class="title-char">て</span><span class="title-char">み</span><span class="title-char">よ</span><span class="title-char">う</span><span class="title-char">！</span>
   </div>
@@ -251,13 +289,33 @@
   </div>
 
   <!-- カテゴリタブ -->
-  <div class="cat-tabs">
-    <button class="cat-tab active" data-cat="どうぶつ">🐾 どうぶつ</button>
-    <button class="cat-tab" data-cat="たべもの">🍎 たべもの</button>
-    <button class="cat-tab" data-cat="かぞく">👨‍👩‍👧 かぞく</button>
-    <button class="cat-tab" data-cat="いろ・かず">🎨 いろ・かず</button>
-    <button class="cat-tab" data-cat="カスタム">✏️ じぶんで</button>
-    <button class="cat-tab" data-cat="さ行">🔤 さ行</button>
+  <!-- カテゴリ選択UI -->
+  <div id="catSelector" style="margin-bottom:.8rem">
+
+    <!-- グループ：ことばのジャンル -->
+    <div class="cat-group-label">🎮 ことばのジャンル</div>
+    <div class="cat-grid">
+      <button class="cat-grid-btn active" data-cat="どうぶつ" style="--c:#6BCB77;--s:#4aa855">🐾<span>どうぶつ</span></button>
+      <button class="cat-grid-btn" data-cat="たべもの"  style="--c:#FF6B6B;--s:#c94040">🍎<span>たべもの</span></button>
+      <button class="cat-grid-btn" data-cat="かぞく"    style="--c:#FF9ECD;--s:#cc6ea0">👨‍👩‍👧<span>かぞく</span></button>
+      <button class="cat-grid-btn" data-cat="いろ・かず" style="--c:#C77DFF;--s:#9945d4">🎨<span>いろ・かず</span></button>
+      <button class="cat-grid-btn" data-cat="カスタム"  style="--c:#3a3a5c;--s:#22224a">✏️<span>じぶんで</span></button>
+    </div>
+
+    <!-- グループ：五十音 -->
+    <div class="cat-group-label" style="margin-top:.7rem">🔤 五十音れんしゅう</div>
+    <div class="cat-grid cat-grid-kana">
+      <button class="cat-grid-btn" data-cat="あ行" style="--c:#FF6B6B;--s:#c94040">あ<span>あ行</span></button>
+      <button class="cat-grid-btn" data-cat="か行" style="--c:#FFD93D;--s:#c9a800;color:#3a3a5c">か<span>か行</span></button>
+      <button class="cat-grid-btn" data-cat="さ行" style="--c:#e67e22;--s:#b9620e">さ<span>さ行</span></button>
+      <button class="cat-grid-btn" data-cat="た行" style="--c:#6BCB77;--s:#4aa855">た<span>た行</span></button>
+      <button class="cat-grid-btn" data-cat="な行" style="--c:#4D96FF;--s:#2a70e0">な<span>な行</span></button>
+      <button class="cat-grid-btn" data-cat="は行" style="--c:#FF9ECD;--s:#cc6ea0">は<span>は行</span></button>
+      <button class="cat-grid-btn" data-cat="ま行" style="--c:#C77DFF;--s:#9945d4">ま<span>ま行</span></button>
+      <button class="cat-grid-btn" data-cat="や行" style="--c:#FF6B6B;--s:#c94040">や<span>や行</span></button>
+      <button class="cat-grid-btn" data-cat="ら行" style="--c:#6BCB77;--s:#4aa855">ら<span>ら行</span></button>
+      <button class="cat-grid-btn" data-cat="わ行" style="--c:#4D96FF;--s:#2a70e0">わ<span>わ行</span></button>
+    </div>
   </div>
 
   <!-- カスタム単語追加パネル -->
@@ -369,9 +427,9 @@ const PROMPTS = {
     {emoji:"🍰", text:"けーき",     keys:["けーき","ケーキ"]},
     {emoji:"🍓", text:"いちご",     keys:["いちご","苺"]},
     {emoji:"🥕", text:"にんじん",   keys:["にんじん","人参"]},
-    {emoji:"🍙", text:"おにぎり",   keys:["おにぎり"]},
-    {emoji:"🍦", text:"あいすくりーむ",keys:["あいすくりーむ","アイスクリーム","アイス"]},
+    {emoji:"🍦", text:"あいすくりーむ", keys:["あいすくりーむ","アイスクリーム","アイス"]},
     {emoji:"🍞", text:"ぱん",       keys:["ぱん","パン"]},
+    {emoji:"🍣", text:"すし",       keys:["すし","寿司"]},
   ],
   "かぞく": [
     {emoji:"👦", text:"おとこのこ", keys:["おとこのこ","男の子"]},
@@ -386,19 +444,263 @@ const PROMPTS = {
     {emoji:"🏠", text:"おうち",     keys:["おうち","家","いえ"]},
   ],
   "いろ・かず": [
-    {emoji:"🔴", text:"あか",       keys:["あか","赤"]},
-    {emoji:"🔵", text:"あお",       keys:["あお","青"]},
-    {emoji:"🟡", text:"きいろ",     keys:["きいろ","黄色","黄"]},
-    {emoji:"🟢", text:"みどり",     keys:["みどり","緑"]},
-    {emoji:"⚫", text:"くろ",       keys:["くろ","黒"]},
-    {emoji:"⚪", text:"しろ",       keys:["しろ","白"]},
-    {emoji:"1️⃣", text:"いち",       keys:["いち","一","1"]},
-    {emoji:"2️⃣", text:"に",         keys:["に","二","2"]},
-    {emoji:"3️⃣", text:"さん",       keys:["さん","三","3"]},
-    {emoji:"4️⃣", text:"し・よん",   keys:["し","よん","四","4"]},
-    {emoji:"5️⃣", text:"ご",         keys:["ご","五","5"]},
+    {emoji:"🔴", text:"あか",   keys:["あか","赤"]},
+    {emoji:"🔵", text:"あお",   keys:["あお","青"]},
+    {emoji:"🟡", text:"きいろ", keys:["きいろ","黄色","黄"]},
+    {emoji:"🟢", text:"みどり", keys:["みどり","緑"]},
+    {emoji:"⚫", text:"くろ",   keys:["くろ","黒"]},
+    {emoji:"⚪", text:"しろ",   keys:["しろ","白"]},
+    {emoji:"1️⃣", text:"いち",   keys:["いち","一","1"]},
+    {emoji:"2️⃣", text:"に",     keys:["に","二","2"]},
+    {emoji:"3️⃣", text:"さん",   keys:["さん","三","3"]},
+    {emoji:"4️⃣", text:"し・よん", keys:["し","よん","四","4"]},
+    {emoji:"5️⃣", text:"ご",     keys:["ご","五","5"]},
   ],
   "カスタム": [],
+  "あ行-1": [
+    {emoji:"🔤", text:"あ", keys:["あ"]},
+    {emoji:"🔤", text:"い", keys:["い"]},
+    {emoji:"🔤", text:"う", keys:["う"]},
+    {emoji:"🔤", text:"え", keys:["え"]},
+    {emoji:"🔤", text:"お", keys:["お"]},
+  ],
+  "あ行-2": [
+    {emoji:"🦶", text:"あし",   keys:["あし","足"]},
+    {emoji:"🐛", text:"いも",   keys:["いも","芋"]},
+    {emoji:"🐮", text:"うし",   keys:["うし","牛"]},
+    {emoji:"🌿", text:"えだ",   keys:["えだ","枝"]},
+    {emoji:"🎵", text:"おと",   keys:["おと","音"]},
+  ],
+  "あ行-3": [
+    {emoji:"🍬", text:"あめ",     keys:["あめ","飴","雨"]},
+    {emoji:"🦑", text:"いか",     keys:["いか","烏賊"]},
+    {emoji:"🐴", text:"うま",     keys:["うま","馬"]},
+    {emoji:"🦐", text:"えび",     keys:["えび","海老"]},
+    {emoji:"🐺", text:"おおかみ", keys:["おおかみ","狼"]},
+  ],
+  "あ行-4": [
+    {emoji:"🍂", text:"あき",       keys:["あき","秋"]},
+    {emoji:"🐬", text:"いるか",     keys:["いるか","海豚"]},
+    {emoji:"🐙", text:"たこ",       keys:["たこ","蛸"]},
+    {emoji:"😊", text:"えがお",     keys:["えがお","笑顔"]},
+    {emoji:"🎶", text:"おんがく",   keys:["おんがく","音楽"]},
+  ],
+  "あ行-5": [],
+  "あ行-6": [],
+  "あ行-7": [],
+  "あ行-8": [],
+  "あ行-9": [],
+  "あ行-10": [],
+  "か行-1": [
+    {emoji:"🔤", text:"か", keys:["か"]},
+    {emoji:"🔤", text:"き", keys:["き"]},
+    {emoji:"🔤", text:"く", keys:["く"]},
+    {emoji:"🔤", text:"け", keys:["け"]},
+    {emoji:"🔤", text:"こ", keys:["こ"]},
+  ],
+  "か行-2": [
+    {emoji:"🦟", text:"かぜ",   keys:["かぜ","風","風邪"]},
+    {emoji:"🌳", text:"き",     keys:["き","木"]},
+    {emoji:"👄", text:"くち",   keys:["くち","口"]},
+    {emoji:"🩸", text:"けが",   keys:["けが","怪我"]},
+    {emoji:"🐚", text:"こえ",   keys:["こえ","声"]},
+  ],
+  "か行-3": [
+    {emoji:"🪞", text:"かがみ", keys:["かがみ","鏡"]},
+    {emoji:"🦊", text:"きつね", keys:["きつね","狐"]},
+    {emoji:"🍇", text:"ぶどう", keys:["ぶどう","葡萄"]},
+    {emoji:"🎂", text:"けーき", keys:["けーき","ケーキ"]},
+    {emoji:"🐣", text:"こども", keys:["こども","子供"]},
+  ],
+  "か行-4": [],
+  "か行-5": [],
+  "か行-6": [],
+  "か行-7": [],
+  "か行-8": [],
+  "か行-9": [],
+  "か行-10": [],
+  "た行-1": [
+    {emoji:"🔤", text:"た", keys:["た"]},
+    {emoji:"🔤", text:"ち", keys:["ち"]},
+    {emoji:"🔤", text:"つ", keys:["つ"]},
+    {emoji:"🔤", text:"て", keys:["て"]},
+    {emoji:"🔤", text:"と", keys:["と"]},
+  ],
+  "た行-2": [
+    {emoji:"🥚", text:"たま",   keys:["たま","玉","卵"]},
+    {emoji:"🌍", text:"ち",     keys:["ち","地"]},
+    {emoji:"🌙", text:"つき",   keys:["つき","月"]},
+    {emoji:"✋", text:"て",     keys:["て","手"]},
+    {emoji:"🚪", text:"とびら", keys:["とびら","扉"]},
+  ],
+  "た行-3": [
+    {emoji:"🥁", text:"たいこ",   keys:["たいこ","太鼓"]},
+    {emoji:"🦋", text:"ちょうちょ", keys:["ちょうちょ","蝶"]},
+    {emoji:"🌊", text:"つなみ",   keys:["つなみ","津波"]},
+    {emoji:"📺", text:"てれび",   keys:["てれび","テレビ"]},
+    {emoji:"🐯", text:"とら",     keys:["とら","虎"]},
+  ],
+  "た行-4": [],
+  "た行-5": [],
+  "た行-6": [],
+  "た行-7": [],
+  "た行-8": [],
+  "た行-9": [],
+  "た行-10": [],
+  "な行-1": [
+    {emoji:"🔤", text:"な", keys:["な"]},
+    {emoji:"🔤", text:"に", keys:["に"]},
+    {emoji:"🔤", text:"ぬ", keys:["ぬ"]},
+    {emoji:"🔤", text:"ね", keys:["ね"]},
+    {emoji:"🔤", text:"の", keys:["の"]},
+  ],
+  "な行-2": [
+    {emoji:"🍆", text:"なす",   keys:["なす","茄子"]},
+    {emoji:"🌈", text:"にじ",   keys:["にじ","虹"]},
+    {emoji:"🧵", text:"ぬの",   keys:["ぬの","布"]},
+    {emoji:"😴", text:"ねこ",   keys:["ねこ","猫","寝子"]},
+    {emoji:"🌾", text:"のはら", keys:["のはら","野原"]},
+  ],
+  "な行-3": [
+    {emoji:"🍎", text:"なかま",   keys:["なかま","仲間"]},
+    {emoji:"🐔", text:"にわとり", keys:["にわとり","鶏"]},
+    {emoji:"🪆", text:"にんぎょう", keys:["にんぎょう","人形"]},
+    {emoji:"😪", text:"ねむい",   keys:["ねむい","眠い"]},
+    {emoji:"🚌", text:"のりもの", keys:["のりもの","乗り物"]},
+  ],
+  "な行-4": [],
+  "な行-5": [],
+  "な行-6": [],
+  "な行-7": [],
+  "な行-8": [],
+  "な行-9": [],
+  "な行-10": [],
+  "は行-1": [
+    {emoji:"🔤", text:"は", keys:["は"]},
+    {emoji:"🔤", text:"ひ", keys:["ひ"]},
+    {emoji:"🔤", text:"ふ", keys:["ふ"]},
+    {emoji:"🔤", text:"へ", keys:["へ"]},
+    {emoji:"🔤", text:"ほ", keys:["ほ"]},
+  ],
+  "は行-2": [
+    {emoji:"🌸", text:"はな",   keys:["はな","花"]},
+    {emoji:"🔥", text:"ひ",     keys:["ひ","火"]},
+    {emoji:"🚢", text:"ふね",   keys:["ふね","船"]},
+    {emoji:"🐍", text:"へび",   keys:["へび","蛇"]},
+    {emoji:"⭐", text:"ほし",   keys:["ほし","星"]},
+  ],
+  "は行-3": [
+    {emoji:"✂️", text:"はさみ",   keys:["はさみ","鋏"]},
+    {emoji:"🐑", text:"ひつじ",   keys:["ひつじ","羊"]},
+    {emoji:"🎅", text:"ふゆ",     keys:["ふゆ","冬"]},
+    {emoji:"🕊️", text:"へいわ",   keys:["へいわ","平和"]},
+    {emoji:"📚", text:"ほんだな", keys:["ほんだな","本棚"]},
+  ],
+  "は行-4": [],
+  "は行-5": [],
+  "は行-6": [],
+  "は行-7": [],
+  "は行-8": [],
+  "は行-9": [],
+  "は行-10": [],
+  "ま行-1": [
+    {emoji:"🔤", text:"ま", keys:["ま"]},
+    {emoji:"🔤", text:"み", keys:["み"]},
+    {emoji:"🔤", text:"む", keys:["む"]},
+    {emoji:"🔤", text:"め", keys:["め"]},
+    {emoji:"🔤", text:"も", keys:["も"]},
+  ],
+  "ま行-2": [
+    {emoji:"🌲", text:"まつ",   keys:["まつ","松"]},
+    {emoji:"👂", text:"みみ",   keys:["みみ","耳"]},
+    {emoji:"🐛", text:"むし",   keys:["むし","虫"]},
+    {emoji:"👁️", text:"め",     keys:["め","目"]},
+    {emoji:"🍑", text:"もも",   keys:["もも","桃"]},
+  ],
+  "ま行-3": [
+    {emoji:"🎃", text:"まつり",   keys:["まつり","祭り"]},
+    {emoji:"🍊", text:"みかん",   keys:["みかん","蜜柑"]},
+    {emoji:"🌻", text:"むすこ",   keys:["むすこ","息子"]},
+    {emoji:"🐑", text:"めひつじ", keys:["めひつじ","雌羊"]},
+    {emoji:"🍝", text:"もりそば", keys:["もりそば","盛り蕎麦"]},
+  ],
+  "ま行-4": [],
+  "ま行-5": [],
+  "ま行-6": [],
+  "ま行-7": [],
+  "ま行-8": [],
+  "ま行-9": [],
+  "ま行-10": [],
+  "や行-1": [
+    {emoji:"🔤", text:"や", keys:["や"]},
+    {emoji:"🔤", text:"ゆ", keys:["ゆ"]},
+    {emoji:"🔤", text:"よ", keys:["よ"]},
+  ],
+  "や行-2": [
+    {emoji:"🏔️", text:"やま",   keys:["やま","山"]},
+    {emoji:"♨️", text:"ゆ",     keys:["ゆ","湯"]},
+    {emoji:"🌙", text:"よる",   keys:["よる","夜"]},
+  ],
+  "や行-3": [
+    {emoji:"🏹", text:"やじるし", keys:["やじるし","矢印"]},
+    {emoji:"🦄",  text:"ゆめ",   keys:["ゆめ","夢"]},
+    {emoji:"👘", text:"ようふく", keys:["ようふく","洋服"]},
+  ],
+  "や行-4": [],
+  "や行-5": [],
+  "や行-6": [],
+  "や行-7": [],
+  "や行-8": [],
+  "や行-9": [],
+  "や行-10": [],
+  "ら行-1": [
+    {emoji:"🔤", text:"ら", keys:["ら"]},
+    {emoji:"🔤", text:"り", keys:["り"]},
+    {emoji:"🔤", text:"る", keys:["る"]},
+    {emoji:"🔤", text:"れ", keys:["れ"]},
+    {emoji:"🔤", text:"ろ", keys:["ろ"]},
+  ],
+  "ら行-2": [
+    {emoji:"🦁", text:"らいおん", keys:["らいおん","ライオン"]},
+    {emoji:"🍎", text:"りんご",   keys:["りんご","林檎"]},
+    {emoji:"📏", text:"るーる",   keys:["るーる","ルール"]},
+    {emoji:"🧊", text:"れいぞうこ", keys:["れいぞうこ","冷蔵庫"]},
+    {emoji:"🕯️", text:"ろうそく", keys:["ろうそく","蝋燭"]},
+  ],
+  "ら行-3": [
+    {emoji:"📻", text:"らじお",   keys:["らじお","ラジオ"]},
+    {emoji:"🐲", text:"りゅう",   keys:["りゅう","龍"]},
+    {emoji:"🎒", text:"るっく",   keys:["るっく","ルック"]},
+    {emoji:"🏛️", text:"れきし",   keys:["れきし","歴史"]},
+    {emoji:"🤖", text:"ろぼっと", keys:["ろぼっと","ロボット"]},
+  ],
+  "ら行-4": [],
+  "ら行-5": [],
+  "ら行-6": [],
+  "ら行-7": [],
+  "ら行-8": [],
+  "ら行-9": [],
+  "ら行-10": [],
+  "わ行-1": [
+    {emoji:"🔤", text:"わ", keys:["わ"]},
+    {emoji:"🔤", text:"を", keys:["を"]},
+    {emoji:"🔤", text:"ん", keys:["ん"]},
+  ],
+  "わ行-2": [
+    {emoji:"😄", text:"わらい", keys:["わらい","笑い"]},
+    {emoji:"🍶", text:"わん",   keys:["わん","椀"]},
+  ],
+  "わ行-3": [
+    {emoji:"🐊", text:"わにわに", keys:["わにわに","ワニワニ"]},
+    {emoji:"🎊", text:"わくわく", keys:["わくわく"]},
+  ],
+  "わ行-4": [],
+  "わ行-5": [],
+  "わ行-6": [],
+  "わ行-7": [],
+  "わ行-8": [],
+  "わ行-9": [],
+  "わ行-10": [],
   "さ行-1": [
     {emoji:"🔤", text:"さ", keys:["さ"]},
     {emoji:"🔤", text:"し", keys:["し"]},
@@ -407,67 +709,67 @@ const PROMPTS = {
     {emoji:"🔤", text:"そ", keys:["そ"]},
   ],
   "さ行-2": [
-    {emoji:"🦈", text:"さめ",  keys:["さめ","鮫"]},
-    {emoji:"🦌", text:"しか",  keys:["しか","鹿"]},
-    {emoji:"❤️", text:"すき",  keys:["すき","好き"]},
-    {emoji:"🦗", text:"せみ",  keys:["せみ","蝉"]},
-    {emoji:"🚪", text:"そと",  keys:["そと","外"]},
+    {emoji:"🦈", text:"さめ",   keys:["さめ","鮫"]},
+    {emoji:"🦌", text:"しか",   keys:["しか","鹿"]},
+    {emoji:"❤️", text:"すき",   keys:["すき","好き"]},
+    {emoji:"🦗", text:"せみ",   keys:["せみ","蝉"]},
+    {emoji:"🌳", text:"そと",   keys:["そと","外"]},
   ],
   "さ行-3": [
-    {emoji:"🐟", text:"さかな",  keys:["さかな","魚"]},
-    {emoji:"🔲", text:"しかく",  keys:["しかく","四角"]},
-    {emoji:"🔢", text:"すうじ",  keys:["すうじ","数字"]},
-    {emoji:"🧍", text:"せなか",  keys:["せなか","背中"]},
-    {emoji:"🧹", text:"そうじ",  keys:["そうじ","掃除"]},
+    {emoji:"🐟", text:"さかな",   keys:["さかな","魚"]},
+    {emoji:"🟥", text:"しかく",   keys:["しかく","四角"]},
+    {emoji:"🔢", text:"すうじ",   keys:["すうじ","数字"]},
+    {emoji:"🏖️", text:"せなか",   keys:["せなか","背中"]},
+    {emoji:"🧹", text:"そうじ",   keys:["そうじ","掃除"]},
   ],
   "さ行-4": [
-    {emoji:"✂️", text:"はさみ",  keys:["はさみ","鋏"]},
-    {emoji:"🌀", text:"ふしぎ",  keys:["ふしぎ","不思議"]},
-    {emoji:"😷", text:"ますく",  keys:["ますく","マスク"]},
-    {emoji:"🍂", text:"きせつ",  keys:["きせつ","季節"]},
-    {emoji:"🎮", text:"あそび",  keys:["あそび","遊び"]},
+    {emoji:"✂️", text:"はさみ",   keys:["はさみ","鋏"]},
+    {emoji:"🪄", text:"ふしぎ",   keys:["ふしぎ","不思議"]},
+    {emoji:"😷", text:"ますく",   keys:["ますく","マスク"]},
+    {emoji:"🍂", text:"きせつ",   keys:["きせつ","季節"]},
+    {emoji:"🎯", text:"あそび",   keys:["あそび","遊び"]},
   ],
   "さ行-5": [
-    {emoji:"🕊️", text:"つばさ",  keys:["つばさ","翼"]},
-    {emoji:"💬", text:"はなし",  keys:["はなし","話"]},
-    {emoji:"💃", text:"だんす",  keys:["だんす","ダンス"]},
-    {emoji:"🔬", text:"はかせ",  keys:["はかせ","博士"]},
-    {emoji:"🌿", text:"さんぞ",  keys:["さんぞ"]},
+    {emoji:"🦋", text:"つばさ",   keys:["つばさ","翼"]},
+    {emoji:"💬", text:"はなし",   keys:["はなし","話"]},
+    {emoji:"💃", text:"ダンス",   keys:["だんす","ダンス"]},
+    {emoji:"🚩", text:"はかせ",   keys:["はかせ","博士"]},
+    {emoji:"🏔️", text:"さんぞく", keys:["さんぞく","山賊"]},
   ],
   "さ行-6": [
-    {emoji:"🔺", text:"さんかく",  keys:["さんかく","三角"]},
-    {emoji:"🦓", text:"しまうま",  keys:["しまうま","縞馬"]},
-    {emoji:"⛸️", text:"すけーと",  keys:["すけーと","スケート"]},
-    {emoji:"👩‍🏫", text:"せんせい",  keys:["せんせい","先生"]},
-    {emoji:"🌬️", text:"そよかぜ",  keys:["そよかぜ","そよ風"]},
+    {emoji:"🔺", text:"さんかく",   keys:["さんかく","三角"]},
+    {emoji:"🦓", text:"しまうま",   keys:["しまうま","縞馬"]},
+    {emoji:"⛸️", text:"スケート",   keys:["すけーと","スケート"]},
+    {emoji:"👨‍🏫", text:"せんせい",  keys:["せんせい","先生"]},
+    {emoji:"🌬️", text:"そよかぜ",   keys:["そよかぜ","そよ風"]},
   ],
   "さ行-7": [
-    {emoji:"🏡", text:"ふるさと",  keys:["ふるさと","故郷"]},
-    {emoji:"🧦", text:"くつした",  keys:["くつした","靴下"]},
-    {emoji:"💊", text:"めぐすり",  keys:["めぐすり","目薬"]},
-    {emoji:"💝", text:"しんせつ",  keys:["しんせつ","親切"]},
-    {emoji:"🤝", text:"やくそく",  keys:["やくそく","約束"]},
+    {emoji:"🏡", text:"ふるさと",   keys:["ふるさと","故郷"]},
+    {emoji:"👟", text:"くつした",   keys:["くつした","靴下"]},
+    {emoji:"💊", text:"めぐすり",   keys:["めぐすり","目薬"]},
+    {emoji:"✨", text:"しんせつ",   keys:["しんせつ","親切"]},
+    {emoji:"🤝", text:"やくそく",   keys:["やくそく","約束"]},
   ],
   "さ行-8": [
-    {emoji:"🌿", text:"ななくさ",  keys:["ななくさ","七草"]},
-    {emoji:"😄", text:"たのしい",  keys:["たのしい","楽しい"]},
-    {emoji:"🎪", text:"さーかす",  keys:["さーかす","サーカス"]},
-    {emoji:"🍀", text:"しあわせ",  keys:["しあわせ","幸せ"]},
-    {emoji:"🎼", text:"がっそう",  keys:["がっそう","合奏"]},
+    {emoji:"🌿", text:"ななくさ",   keys:["ななくさ","七草"]},
+    {emoji:"😄", text:"たのしい",   keys:["たのしい","楽しい"]},
+    {emoji:"🎪", text:"サーカス",   keys:["さーかす","サーカス"]},
+    {emoji:"😊", text:"しあわせ",   keys:["しあわせ","幸せ"]},
+    {emoji:"🎶", text:"がっそう",   keys:["がっそう","合奏"]},
   ],
   "さ行-9": [
-    {emoji:"🥪", text:"さんどいっち",    keys:["さんどいっち","サンドイッチ"]},
-    {emoji:"📰", text:"しんぶんし",      keys:["しんぶんし","新聞紙"]},
-    {emoji:"🐠", text:"すいぞくかん",    keys:["すいぞくかん","水族館"]},
-    {emoji:"🚄", text:"しんかんせん",    keys:["しんかんせん","新幹線"]},
-    {emoji:"🎓", text:"そつぎょうしき",  keys:["そつぎょうしき","卒業式"]},
+    {emoji:"🥪", text:"サンドイッチ", keys:["さんどいっち","サンドイッチ"]},
+    {emoji:"📰", text:"しんぶんし",   keys:["しんぶんし","新聞紙"]},
+    {emoji:"🐠", text:"すいぞくかん", keys:["すいぞくかん","水族館"]},
+    {emoji:"🚄", text:"しんかんせん", keys:["しんかんせん","新幹線"]},
+    {emoji:"🍽️", text:"ごちそうさま", keys:["ごちそうさま"]},
   ],
   "さ行-10": [
-    {emoji:"🎵", text:"こんさーと",      keys:["こんさーと","コンサート"]},
-    {emoji:"😋", text:"くいしんぼう",    keys:["くいしんぼう","食いしん坊"]},
-    {emoji:"🍦", text:"あいすくりーむ",  keys:["あいすくりーむ","アイスクリーム"]},
-    {emoji:"🦐", text:"えびせんべい",    keys:["えびせんべい","海老煎餅"]},
-    {emoji:"🙏", text:"ごちそうさま",    keys:["ごちそうさま","ご馳走様"]},
+    {emoji:"🎵", text:"コンサート",     keys:["こんさーと","コンサート"]},
+    {emoji:"😋", text:"くいしんぼう",   keys:["くいしんぼう"]},
+    {emoji:"🍦", text:"アイスクリーム", keys:["あいすくりーむ","アイスクリーム"]},
+    {emoji:"🍤", text:"えびせんべい",   keys:["えびせんべい"]},
+    {emoji:"🎊", text:"ごちそうさき",   keys:["ごちそうさき","ごちそうさま"]},
   ],
 };
 // =====================
@@ -489,8 +791,13 @@ function init() {
   buildBgStars();
   checkSpeechSupport();
   setupTabs();
-  shuffle(PROMPTS["どうぶつ"]);
-  showPrompt();
+  // 必ず初期カテゴリをリセット
+  currentCat = "どうぶつ";
+  currentIndex = 0;
+  const list = PROMPTS["どうぶつ"];
+  if (list && list.length > 0) shuffle(list);
+  // DOMが確実に存在してから表示
+  setTimeout(() => showPrompt(), 0);
 }
 
 function checkSpeechSupport() {
@@ -549,47 +856,92 @@ function setupRecognition() {
 // =====================
 // カテゴリ
 // =====================
+// 行タブのリスト
+const ROW_CATS = ["あ行","か行","さ行","た行","な行","は行","ま行","や行","ら行","わ行"];
+
 function setupTabs() {
-  let currentSaLevel = 1;
-
-  // さ行レベルボタンのセットアップ
-  document.querySelectorAll(".sa-btn").forEach(btn => {
+  document.querySelectorAll(".cat-grid-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".sa-btn").forEach(b => b.classList.remove("active"));
+      // アクティブ切り替え
+      document.querySelectorAll(".cat-grid-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      currentSaLevel = parseInt(btn.dataset.level);
-      currentCat = "さ行-" + currentSaLevel;
-      shuffle(PROMPTS[currentCat]);
-      currentIndex = 0;
-      resetState();
-      showPrompt();
-    });
-  });
+      const cat = btn.dataset.cat;
 
-  document.querySelectorAll(".cat-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".cat-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      const cat = tab.dataset.cat;
-      const saPanel = document.getElementById("saPanel");
+      // カスタムパネル
       const customPanel = document.getElementById("customPanel");
+      customPanel.style.display = cat === "カスタム" ? "block" : "none";
 
-      if (cat === "さ行") {
-        saPanel.style.display = "block";
-        customPanel.style.display = "none";
-        currentCat = "さ行-" + currentSaLevel;
+      // 行タブならレベルサブタブを表示
+      if (ROW_CATS.includes(cat)) {
+        currentCat = cat + "-1";
+        showLevelTabs(cat);
       } else {
-        saPanel.style.display = "none";
-        customPanel.style.display = cat === "カスタム" ? "block" : "none";
         currentCat = cat;
+        hideLevelTabs();
       }
 
-      if (currentCat !== "カスタム") shuffle(PROMPTS[currentCat]);
       currentIndex = 0;
       resetState();
+      const list = PROMPTS[currentCat];
+      if (list && list.length > 0) shuffle(list);
       showPrompt();
     });
   });
+}
+
+// =====================
+// レベルサブタブ
+// =====================
+function showLevelTabs(rowName) {
+  let panel = document.getElementById("levelTabPanel");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "levelTabPanel";
+    panel.style.cssText = "display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:.8rem;";
+    const catSelector = document.getElementById("catSelector");
+    catSelector.after(panel);
+  }
+  panel.innerHTML = "";
+  panel.style.display = "flex";
+
+  for (let i = 1; i <= 10; i++) {
+    const key = rowName + "-" + i;
+    const list = PROMPTS[key] || [];
+    const btn = document.createElement("button");
+    btn.textContent = `Lv${i}（${list.length}語）`;
+    btn.dataset.key = key;
+    const isActive = (currentCat === key);
+    btn.style.cssText = `
+      font-family:'Kosugi Maru',sans-serif;font-size:.75rem;
+      padding:.3rem .7rem;border-radius:50px;
+      border:2px solid ${isActive ? "#4D96FF" : "#c5d8ef"};
+      background:${isActive ? "#4D96FF" : "white"};
+      color:${isActive ? "white" : "#7a8eab"};
+      cursor:pointer;box-shadow:0 2px 0 #d0dde8;
+      opacity:${list.length === 0 ? ".4" : "1"};
+    `;
+    btn.onclick = () => {
+      currentCat = key;
+      currentIndex = 0;
+      resetState();
+      const l = PROMPTS[currentCat];
+      if (l && l.length > 0) shuffle(l);
+      showPrompt();
+      // ボタン見た目更新
+      panel.querySelectorAll("button").forEach(b => {
+        const active = b.dataset.key === key;
+        b.style.background = active ? "#4D96FF" : "white";
+        b.style.color = active ? "white" : "#7a8eab";
+        b.style.borderColor = active ? "#4D96FF" : "#c5d8ef";
+      });
+    };
+    panel.appendChild(btn);
+  }
+}
+
+function hideLevelTabs() {
+  const panel = document.getElementById("levelTabPanel");
+  if (panel) panel.style.display = "none";
 }
 
 // =====================
@@ -597,16 +949,28 @@ function setupTabs() {
 // =====================
 function currentPrompt() {
   const list = PROMPTS[currentCat];
+  if (!list || list.length === 0) return {emoji:"❓", text:"—", keys:[]};
   return list[currentIndex % list.length];
 }
 
 function showPrompt() {
+  // カスタムが空の場合
   if (currentCat === "カスタム" && PROMPTS["カスタム"].length === 0) {
     document.getElementById("promptEmoji").textContent = "✏️";
     document.getElementById("promptText").textContent = "ことばをついかしてね";
     document.getElementById("resultCard").classList.remove("show");
     resetState();
     setBubble("ことばをついかしてね！");
+    return;
+  }
+  // リストが空またはundefinedの場合
+  const list = PROMPTS[currentCat];
+  if (!list || list.length === 0) {
+    document.getElementById("promptEmoji").textContent = "🔤";
+    document.getElementById("promptText").textContent = "ことばがまだないよ";
+    document.getElementById("resultCard").classList.remove("show");
+    resetState();
+    setBubble("ほかのレベルをえらんでね！");
     return;
   }
   const p = currentPrompt();
@@ -774,6 +1138,65 @@ function finishRecording(heard) {
 
   showResult(heard, matched);
   speakFeedback(matched, prompt.text);
+  autoSaveRecord(matched);
+}
+
+// =====================
+// 練習記録の自動保存
+// =====================
+const STORAGE_KEY = "hanashite_records_v2";
+
+function loadRecords() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+  catch(e) { return []; }
+}
+function saveRecords(r) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(r)); }
+  catch(e) { console.warn("記録の保存失敗:", e); }
+}
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+// セッション中の集計
+let sessionCorrect = 0;
+let sessionTotal = 0;
+let sessionStartTime = Date.now();
+
+function autoSaveRecord(correct) {
+  sessionTotal++;
+  if (correct) sessionCorrect++;
+
+  const today = todayStr();
+  const records = loadRecords();
+  const idx = records.findIndex(r => r.date === today);
+  const minutes = Math.round((Date.now() - sessionStartTime) / 60000);
+  const stars = sessionTotal === 0 ? 0 : Math.round((sessionCorrect / sessionTotal) * 3);
+
+  const entry = {
+    id: today + "_" + Date.now(),
+    date: today,
+    minutes: Math.max(1, minutes),
+    correct: sessionCorrect,
+    total: sessionTotal,
+    stars: stars,
+    memo: ""
+  };
+
+  if (idx >= 0) {
+    entry.id = records[idx].id;
+    // 既存の記録と合算
+    entry.correct = (records[idx].correct || 0) + (correct ? 1 : 0);
+    entry.total = (records[idx].total || 0) + 1;
+    entry.minutes = Math.max(records[idx].minutes || 1, Math.max(1, minutes));
+    entry.stars = Math.round((entry.correct / entry.total) * 3);
+    entry.memo = records[idx].memo || "";
+    records[idx] = entry;
+  } else {
+    records.push(entry);
+  }
+  saveRecords(records);
 }
 
 // =====================
@@ -1025,12 +1448,11 @@ function removeCustomWord(el) {
 // =====================
 // 起動
 // =====================
-init();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 </script>
-
-<div style="position:relative;z-index:1;padding:0 1rem;max-width:520px;margin:.4rem auto 1.5rem">
-  <a href="kiroku.html" class="back-btn">📅 きろくをみる</a>
-</div>
-
 </body>
 </html>
