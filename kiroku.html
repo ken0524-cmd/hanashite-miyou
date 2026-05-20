@@ -337,6 +337,11 @@
       <div class="stat-lbl">せいかい<br>すうけい</div>
     </div>
     <div class="stat-card">
+      <span class="stat-icon">🎯</span>
+      <div class="stat-num" id="statRate">—</div>
+      <div class="stat-lbl">せいかい<br>りつ</div>
+    </div>
+    <div class="stat-card">
       <span class="stat-icon">⭐</span>
       <div class="stat-num" id="statAvgStars">—</div>
       <div class="stat-lbl">へいきん<br>ほし</div>
@@ -454,7 +459,10 @@ function renderCalendar() {
       if (s >= 3) el.classList.add("hi");
       else if (s === 2) el.classList.add("mid");
       const tip = document.createElement("div"); tip.className = "tooltip";
-      tip.textContent = (rec.minutes||0)+"ふん ✅"+(rec.correct||0)+"こ "+"⭐".repeat(s) + (rec.memo ? " "+rec.memo : "");
+      const tot2 = rec.total || 0;
+      const cor2 = rec.correct || 0;
+      const rate2 = tot2 > 0 ? " ("+cor2+"/"+tot2+"もん "+Math.min(100, Math.round(cor2/tot2*100))+"%)" : "";
+      tip.textContent = (rec.minutes||0)+"ふん ✅"+cor2+"せいかい"+rate2+" "+"⭐".repeat(s)+(rec.memo?" "+rec.memo:"");
       el.appendChild(tip);
     }
     grid.appendChild(el);
@@ -497,8 +505,11 @@ function updateStats() {
   const totalCorrect = records.reduce((a,r) => a+(r.correct||0), 0);
   const sa = records.map(r => r.stars).filter(s => s > 0);
   const avg = sa.length ? (sa.reduce((a,b)=>a+b,0)/sa.length).toFixed(1) : "—";
+  const totalTotal = records.reduce((a,r) => a+(r.total||0), 0);
+  const totalRate = totalTotal > 0 ? Math.min(100, Math.round(totalCorrect/totalTotal*100))+"%" : "—";
   document.getElementById("statDays").textContent = days;
   document.getElementById("statCorrect").textContent = totalCorrect;
+  if(document.getElementById("statRate")) document.getElementById("statRate").textContent = totalRate;
   document.getElementById("statAvgStars").textContent = avg;
   const {current, best} = calcStreak(records);
   document.getElementById("streakNum").textContent = current;
@@ -515,14 +526,17 @@ function renderHistory() {
     el.innerHTML='<div class="no-hist">まだきろくがないよ！<br>れんしゅうしてみよう！🎤<br><br>🌈 きろくがたまると<br>たのしいことがおきるかも！</div>';
     return;
   }
-  el.innerHTML = records.map(r =>
-    '<div class="hist-item">' +
+  el.innerHTML = records.map(r => {
+    const tot = r.total || 0;
+    const cor = r.correct || 0;
+    const rate = tot > 0 ? "（" + cor + "/" + tot + "もん・" + Math.min(100, Math.round(cor/tot*100)) + "%）" : "";
+    return '<div class="hist-item">' +
     '<div class="hist-date">'+r.date.slice(5).replace("-","／")+'</div>' +
     '<div class="hist-stars">'+"⭐".repeat(r.stars||0)+'</div>' +
-    '<div class="hist-detail">⏱'+(r.minutes||0)+'ふん ✅'+(r.correct||0)+'こ'+(r.memo?" 💬"+r.memo:"")+'</div>' +
+    '<div class="hist-detail">⏱'+(r.minutes||0)+'ふん ✅'+cor+'せいかい'+rate+(r.memo?" 💬"+r.memo:"")+'</div>' +
     '<button class="hist-del" onclick="deleteRecord(\''+r.id+'\')">✕</button>' +
-    '</div>'
-  ).join("");
+    '</div>';
+  }).join("");
 }
 
 function deleteRecord(id) {
