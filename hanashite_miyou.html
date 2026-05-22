@@ -204,6 +204,17 @@
   /* NO SUPPORT */
   .no-support{background:#fff3cd;border:2px solid var(--yellow);border-radius:16px;padding:1rem;text-align:center;font-size:.85rem;color:#856404;display:none;margin-bottom:.8rem}
 
+  /* ADVICE CARD */
+  .advice-card{background:#fff9e6;border:3px solid var(--yellow);border-radius:20px;padding:.9rem 1rem;margin-top:.7rem;text-align:left;display:none;animation:resultPop .3s cubic-bezier(.34,1.56,.64,1)}
+  .advice-title{font-size:.75rem;color:#c09000;font-weight:700;margin-bottom:.5rem;letter-spacing:.1em}
+  .advice-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;font-size:.88rem;color:var(--dark)}
+  .advice-char{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;border-radius:50%;font-weight:900;font-size:1rem;flex-shrink:0}
+  .advice-char.ok{background:#eafdf2;color:#1e8a47;border:2px solid var(--green)}
+  .advice-char.ng{background:#fff0f0;color:#c94040;border:2px solid var(--orange)}
+  .advice-char.miss{background:#f0f0ff;color:#6644cc;border:2px solid #a0a0ff}
+  .advice-tip{font-size:.78rem;color:#7a8eab;margin-top:.3rem;line-height:1.5}
+  .mouth-shape{display:inline-block;background:var(--sky);border-radius:8px;padding:.15rem .5rem;font-size:.82rem;color:var(--dark);border:1px solid #c5d8ef;margin:0 .1rem}
+
   /* CONFETTI */
   .confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:100;display:none}
   .confetti-piece{position:absolute;width:12px;height:12px;border-radius:2px;animation:confettiFall linear forwards}
@@ -394,7 +405,12 @@
     <span class="big-result" id="bigResult">🎉</span>
     <div class="result-msg" id="resultMsg">すごい！</div>
     <div class="stars-row" id="starsRow">⭐⭐⭐</div>
-    <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap">
+    <!-- アドバイスカード（不正解時） -->
+    <div class="advice-card" id="adviceCard">
+      <div class="advice-title">💡 こうすると うまくいくよ！</div>
+      <div id="adviceBody"></div>
+    </div>
+    <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem">
       <button class="try-again-btn" onclick="tryAgain()">🔄 もういちど</button>
       <button class="next-word-btn" onclick="nextPrompt()">➡️ つぎのことば</button>
     </div>
@@ -811,18 +827,29 @@ function checkSpeechSupport() {
   }
 }
 
+// 認識済みフラグ（2重処理防止）
+let recognitionDone = false;
+
 function setupRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = "ja-JP";
-  recognition.continuous = true;      // 即終了を防ぐ
-  recognition.interimResults = true;  // 途中結果も受け取る
+  recognition.continuous = true;
+  recognition.interimResults = true;
   recognition.maxAlternatives = 5;
+  recognitionDone = false; // リセット
 
   recognition.onresult = (e) => {
-    // 最終結果（isFinal）のみ判定に使う
+    // 最終結果（isFinal）のみ処理、かつ1回だけ
     const result = e.results[e.results.length - 1];
-    if (!result.isFinal) return; // 途中結果は無視
+    if (!result.isFinal) return;
+    if (recognitionDone) return; // すでに処理済みなら無視
+    recognitionDone = true;      // フラグを立てて以降の結果をすべてブロック
+
+    // 即座に録音を止める
+    clearTimeout(recTimer);
+    stopMicLevel();
+    try { recognition.abort(); } catch(e) {}
 
     const prompt = currentPrompt();
     let heard = "";
@@ -834,21 +861,28 @@ function setupRecognition() {
       }
     }
     if (!heard) heard = result[0].transcript.trim();
-    lastHeard = heard;
+
+    // 結果を固定してから判定
     finishRecording(heard);
   };
 
   recognition.onerror = (e) => {
-    if (e.error === "no-speech" || e.error === "audio-capture") {
-      finishRecording("");
+    if (recognitionDone) return;
+    if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+      useManualMode();
+      setState("wait");
+    } else if (e.error === "no-speech" || e.error === "audio-capture" || e.error === "network") {
+      if (!recognitionDone) { recognitionDone = true; finishRecording(""); }
     } else if (e.error !== "aborted") {
-      finishRecording("");
+      if (!recognitionDone) { recognitionDone = true; finishRecording(""); }
     }
   };
 
   recognition.onend = () => {
-    if (state === "go") {
-      // 録音が自然終了した場合（結果未受信）
+    // 録音が自然終了したが結果がまだ来ていない場合
+    if (state === "go" && !recognitionDone) {
+      recognitionDone = true;
+      finishRecording(lastHeard || "");
     }
   };
 }
@@ -1137,8 +1171,8 @@ function finishRecording(heard) {
   const matched = isMatch(heard, prompt.keys);
 
   showResult(heard, matched);
-  speakFeedback(matched, prompt.text);
-  autoSaveRecord(matched, prompt);
+  speakFeedback(matched, prompt.text, heard);
+  autoSaveRecord(matched);
 }
 
 // =====================
@@ -1163,18 +1197,10 @@ function todayStr() {
 let sessionCorrect = 0;
 let sessionTotal = 0;
 let sessionStartTime = Date.now();
-let sessionWrongWords = []; // 間違えた単語リスト
 
-function autoSaveRecord(correct, word) {
+function autoSaveRecord(correct) {
   sessionTotal++;
-  if (correct) {
-    sessionCorrect++;
-  } else if (word) {
-    // 間違えた単語を記録（重複は除く）
-    if (!sessionWrongWords.find(w => w.text === word.text)) {
-      sessionWrongWords.push({ emoji: word.emoji, text: word.text });
-    }
-  }
+  if (correct) sessionCorrect++;
 
   const today = todayStr();
   const records = loadRecords();
@@ -1189,8 +1215,7 @@ function autoSaveRecord(correct, word) {
     correct: sessionCorrect,
     total: sessionTotal,
     stars: stars,
-    memo: "",
-    wrongWords: [...sessionWrongWords]
+    memo: ""
   };
 
   if (idx >= 0) {
@@ -1201,18 +1226,6 @@ function autoSaveRecord(correct, word) {
     entry.minutes = Math.max(records[idx].minutes || 1, Math.max(1, minutes));
     entry.stars = Math.round((entry.correct / entry.total) * 3);
     entry.memo = records[idx].memo || "";
-    // wrongWordsをマージ（重複除く）
-    const existingWrong = records[idx].wrongWords || [];
-    const merged = [...existingWrong];
-    sessionWrongWords.forEach(w => {
-      if (!merged.find(m => m.text === w.text)) merged.push(w);
-    });
-    // 正解した単語は間違いリストから除く
-    if (correct && word) {
-      const idx2 = merged.findIndex(m => m.text === word.text);
-      if (idx2 >= 0) merged.splice(idx2, 1);
-    }
-    entry.wrongWords = merged;
     records[idx] = entry;
   } else {
     records.push(entry);
@@ -1257,15 +1270,163 @@ function showResult(heard, correct) {
     msgEl.className = "result-msg wrong";
     starsEl.textContent = "⭐";
     setBubble("がんばって！");
+    // アドバイス表示
+    const prompt = currentPrompt();
+    generateAdvice(prompt.text, heard);
   } else {
     bigEl.textContent = "🎤";
     msgEl.textContent = "こえがきこえなかったよ。もういちど！";
     msgEl.className = "result-msg wrong";
     starsEl.textContent = "";
     setBubble("もういちどはなしてね！");
+    // 聞き取れなかったアドバイス
+    const prompt2 = currentPrompt();
+    generateAdvice(prompt2.text, "");
   }
 
   card.classList.add("show");
+}
+
+
+// =====================
+// 発音アドバイス
+// =====================
+const MOUTH_TIPS = {
+  "あ": {mouth:"あ", tip:"口をおおきく「あ」とひらく"},
+  "い": {mouth:"い", tip:"口を横にひっぱって「い」とする"},
+  "う": {mouth:"う", tip:"口をすぼめて「う」とまるくする"},
+  "え": {mouth:"え", tip:"口を少しひらいて「え」とする"},
+  "お": {mouth:"お", tip:"口をまるく「お」とひらく"},
+  "か": {mouth:"か", tip:"「か」は のどの おくで はじく"},
+  "き": {mouth:"き", tip:"「き」は 口を横に して のどではじく"},
+  "く": {mouth:"く", tip:"「く」は のどの おくで はじく"},
+  "け": {mouth:"け", tip:"「け」は 口を 少し ひらく"},
+  "こ": {mouth:"こ", tip:"「こ」は のどの おくではじく"},
+  "さ": {mouth:"さ", tip:"「さ」は 舌を 上の歯の後ろに 近づけて 息を出す"},
+  "し": {mouth:"し", tip:"「し」は 舌を うしろに ひいて 息を だす"},
+  "す": {mouth:"す", tip:"「す」は 舌を 歯の後ろに 近づける"},
+  "せ": {mouth:"せ", tip:"「せ」は 舌を 上の歯の 後ろに 近づける"},
+  "そ": {mouth:"そ", tip:"「そ」は 舌を 歯の うらで 息を 出す"},
+  "た": {mouth:"た", tip:"「た」は 舌を 上の 歯の うらに つけて はなす"},
+  "ち": {mouth:"ち", tip:"「ち」は 舌を 上あごに つけて はなす"},
+  "つ": {mouth:"つ", tip:"「つ」は 舌を 歯の うらに つけて 息を だす"},
+  "て": {mouth:"て", tip:"「て」は 舌を 上の 歯の うらに つける"},
+  "と": {mouth:"と", tip:"「と」は 舌を 上の 歯の うらに つけて はなす"},
+  "な": {mouth:"な", tip:"「な」は 舌を 上の歯の うらに つけて 鼻から 息を だす"},
+  "に": {mouth:"に", tip:"「に」は 舌を 上あごに つけて 鼻から だす"},
+  "ぬ": {mouth:"ぬ", tip:"「ぬ」は 舌を 上の歯の うらに つけて 鼻から だす"},
+  "ね": {mouth:"ね", tip:"「ね」は 舌を 上の歯の うらに つける"},
+  "の": {mouth:"の", tip:"「の」は 舌を 上あごに つけて 鼻から だす"},
+  "は": {mouth:"は", tip:"「は」は 口を ひらいて 息を 出す"},
+  "ひ": {mouth:"ひ", tip:"「ひ」は のどの おくで 息を だす"},
+  "ふ": {mouth:"ふ", tip:"「ふ」は 口を すぼめて 息を だす"},
+  "へ": {mouth:"へ", tip:"「へ」は 口を 少し ひらいて 息を だす"},
+  "ほ": {mouth:"ほ", tip:"「ほ」は 口を まるく ひらいて 息を だす"},
+  "ま": {mouth:"ま", tip:"「ま」は 口を とじてから はなす"},
+  "み": {mouth:"み", tip:"「み」は 口を とじてから 横に ひく"},
+  "む": {mouth:"む", tip:"「む」は 口を とじてから すぼめる"},
+  "め": {mouth:"め", tip:"「め」は 口を とじてから 少し ひらく"},
+  "も": {mouth:"も", tip:"「も」は 口を とじてから まるく ひらく"},
+  "や": {mouth:"や", tip:"「や」は 口を 大きく ひらく"},
+  "ゆ": {mouth:"ゆ", tip:"「ゆ」は 口を すぼめる"},
+  "よ": {mouth:"よ", tip:"「よ」は 口を まるく ひらく"},
+  "ら": {mouth:"ら", tip:"「ら」は 舌を 上あごに かるく つけて はなす"},
+  "り": {mouth:"り", tip:"「り」は 舌を 上あごに かるく つける"},
+  "る": {mouth:"る", tip:"「る」は 舌を 上あごに かるく つけて まるく する"},
+  "れ": {mouth:"れ", tip:"「れ」は 舌を 上あごに つけて はなす"},
+  "ろ": {mouth:"ろ", tip:"「ろ」は 舌を 上あごに かるく つける"},
+  "わ": {mouth:"わ", tip:"「わ」は 口を 大きく ひらく"},
+};
+
+// ひらがなに変換（カタカナ→ひらがな）
+function toHira(str) {
+  return str.replace(/[\u30A1-\u30F6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+}
+
+// 文字ごとの一致チェック（DP最小編集距離）
+function charDiff(target, heard) {
+  // 文字ごとに OK / NG / MISS を分類
+  const t = toHira(target).split('');
+  const h = toHira(heard || '').split('');
+  const result = [];
+
+  // シンプルな対応付け
+  const maxLen = Math.max(t.length, h.length);
+  for (let i = 0; i < maxLen; i++) {
+    const tc = t[i] || null;
+    const hc = h[i] || null;
+    if (tc && hc) {
+      result.push({target: tc, heard: hc, ok: tc === hc});
+    } else if (tc && !hc) {
+      result.push({target: tc, heard: null, ok: false}); // 言い忘れ
+    }
+  }
+  return result;
+}
+
+function generateAdvice(target, heard) {
+  const card = document.getElementById("adviceCard");
+  const body = document.getElementById("adviceBody");
+
+  if (!heard) {
+    // 聞き取れなかった場合
+    card.style.display = "block";
+    body.innerHTML = `
+      <div class="advice-row">🎤 マイクに もっと ちかづいて はなしてみよう！</div>
+      <div class="advice-tip">おおきな こえで「<b>${target}</b>」といってみてね</div>`;
+    return;
+  }
+
+  const diffs = charDiff(target, heard);
+  const ngChars = diffs.filter(d => !d.ok);
+
+  if (ngChars.length === 0) {
+    card.style.display = "none";
+    return;
+  }
+
+  card.style.display = "block";
+  let html = '';
+
+  // 文字ごとの比較表示
+  html += '<div class="advice-row" style="flex-wrap:wrap;gap:.3rem">';
+  html += '<span style="font-size:.78rem;color:#a0b0c8;width:100%;margin-bottom:.2rem">▼ もじごとのかくにん</span>';
+  diffs.forEach(d => {
+    if (d.ok) {
+      html += `<span class="advice-char ok" title="${d.target}">✅${d.target}</span>`;
+    } else if (!d.heard) {
+      html += `<span class="advice-char miss" title="言い忘れ">❓${d.target}</span>`;
+    } else {
+      html += `<span class="advice-char ng" title="${d.heard}→${d.target}">❌${d.target}</span>`;
+    }
+  });
+  html += '</div>';
+
+  // NG文字のヒント
+  const shown = new Set();
+  ngChars.forEach(d => {
+    if (!d.target || shown.has(d.target)) return;
+    shown.add(d.target);
+    const tip = MOUTH_TIPS[d.target];
+    if (tip) {
+      html += `<div class="advice-row">
+        <span class="advice-char ng">${d.target}</span>
+        <span>「<b>${d.target}</b>」は <span class="mouth-shape">👄${tip.mouth}</span> ${tip.tip}</span>
+      </div>`;
+    } else if (!d.heard) {
+      html += `<div class="advice-row">
+        <span class="advice-char miss">${d.target}</span>
+        <span>「<b>${d.target}</b>」を わすれずに いってみよう！</span>
+      </div>`;
+    } else {
+      html += `<div class="advice-row">
+        <span class="advice-char ng">${d.target}</span>
+        <span>「<b>${d.heard}</b>」ではなく「<b>${d.target}</b>」とはなしてみよう</span>
+      </div>`;
+    }
+  });
+
+  body.innerHTML = html;
 }
 
 // =====================
@@ -1302,6 +1463,7 @@ function speakFeedback(correct, word) {
 // =====================
 function tryAgain() {
   document.getElementById("resultCard").classList.remove("show");
+  document.getElementById("adviceCard").style.display = "none";
   resetState();
   setBubble("いっしょにれんしゅうしよう！");
 }
