@@ -171,96 +171,11 @@ header {
 .cf{position:fixed;inset:0;pointer-events:none;z-index:200;display:none}
 .cp{position:absolute;animation:cpF linear forwards}
 @keyframes cpF{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-
-/* 宝箱演出オーバーレイ */
-#chestOverlay {
-  position:fixed;inset:0;z-index:300;
-  display:none;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
-}
-#chestOverlay.open{display:flex}
-#chestBox {
-  position:relative;text-align:center;
-  animation:chestIn .5s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes chestIn{from{transform:scale(.2) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0deg);opacity:1}}
-
-.chest-emoji-wrap {
-  position:relative;display:inline-block;
-  filter:drop-shadow(0 0 30px rgba(255,215,0,.9));
-}
-.chest-main {
-  font-size:7rem;
-  display:block;
-  line-height:1;
-  transition:transform .3s;
-}
-.chest-sparkle {
-  position:absolute;
-  animation:sparklePop ease-out forwards;
-  font-size:1.5rem;
-  pointer-events:none;
-}
-@keyframes sparklePop {
-  0%{transform:translate(-50%,-50%) scale(0);opacity:1}
-  60%{opacity:1}
-  100%{transform:translate(-50%,-50%) scale(1) translate(var(--sx),var(--sy));opacity:0}
-}
-.chest-open-txt {
-  font-size:1.5rem;font-weight:900;color:#FFD93D;
-  margin-top:.5rem;
-  text-shadow:0 0 20px rgba(255,215,0,.8),2px 2px 0 rgba(0,0,0,.5);
-  animation:txtPulse 1s ease-in-out infinite;
-}
-@keyframes txtPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
-.chest-sub-txt {
-  font-size:.9rem;color:rgba(255,255,255,.8);margin-top:.3rem;
-}
-.chest-key {
-  font-size:2.5rem;
-  animation:keyRotate .6s ease-out;
-  display:inline-block;
-}
-@keyframes keyRotate{0%{transform:rotate(-180deg) scale(0)}100%{transform:rotate(0deg) scale(1)}}
-.chest-btn {
-  font-family:'Kosugi Maru',sans-serif;
-  margin-top:1.2rem;
-  background:linear-gradient(135deg,#FFD93D,#FF6B6B);
-  color:white;border:none;border-radius:50px;
-  padding:.65rem 2rem;font-size:.95rem;font-weight:700;
-  cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.3);
-  transition:all .15s;display:block;margin-left:auto;margin-right:auto;
-}
-.chest-btn:hover{transform:translateY(-2px)}
-.chest-btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
-
-.glow-ring {
-  position:absolute;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:140px;height:140px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,215,0,.5) 0%,rgba(255,100,0,.2) 50%,transparent 70%);
-  animation:glowPulse 1.2s ease-in-out infinite;
-  pointer-events:none;
-}
-@keyframes glowPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.3)}}
 </style>
 </head>
 <body>
 
 <div class="cf" id="cf"></div>
-
-<!-- 宝箱演出オーバーレイ -->
-<div id="chestOverlay">
-  <div id="chestBox">
-    <div class="glow-ring"></div>
-    <div class="chest-emoji-wrap" id="chestEmojiwrap">
-      <span class="chest-main" id="chestEmoji">🔒</span>
-    </div>
-    <div class="chest-open-txt" id="chestOpenTxt">🗝️ かぎがひらいた！</div>
-    <div class="chest-sub-txt" id="chestSubTxt">たからばこがひらく...</div>
-    <button class="chest-btn" id="chestCloseBtn" onclick="closeChest()">✨ やったー！</button>
-  </div>
-</div>
 
 <div class="popup" id="popup">
   <div class="popup-inner">
@@ -856,127 +771,15 @@ function drawMascot(cleared,isGoal){
 }
 
 let correct=0;
-
-// 宝箱演出
-function showChestAnimation(info, n, cl, c) {
-  const overlay = document.getElementById("chestOverlay");
-  const emoji = document.getElementById("chestEmoji");
-  const openTxt = document.getElementById("chestOpenTxt");
-  const subTxt = document.getElementById("chestSubTxt");
-  const wrap = document.getElementById("chestEmojiwrap");
-  const btn = document.getElementById("chestCloseBtn");
-
-  // 鍵の状態でスタート
-  emoji.textContent = "🔒";
-  openTxt.textContent = "🗝️ かぎがひらいた！";
-  subTxt.textContent = "たからばこがひらくよ...";
-  btn.style.display = "none";
-  overlay.classList.add("open");
-
-  // Step1: 鍵が開く (0.4s)
-  setTimeout(() => {
-    emoji.textContent = "🗝️";
-    emoji.style.animation = "none";
-    emoji.offsetHeight; // reflow
-    emoji.style.animation = "keyRotate .6s ease-out";
-    openTxt.textContent = "✨ マス" + n + "がひらいた！";
-  }, 400);
-
-  // Step2: 宝箱閉じた→開く (1.0s)
-  setTimeout(() => {
-    emoji.style.animation = "none";
-    emoji.textContent = "📦";
-    emoji.style.fontSize = "7rem";
-  }, 1000);
-
-  // Step3: 宝箱パカっと開く (1.6s)
-  setTimeout(() => {
-    emoji.textContent = "🎁";
-    emoji.style.animation = "none";
-    emoji.offsetHeight;
-    emoji.style.animation = "chestIn .4s cubic-bezier(.34,1.56,.64,1)";
-    subTxt.textContent = info.a + "のほうびだ！";
-
-    // キラキラをばらまく
-    spawnSparkles(wrap);
-  }, 1600);
-
-  // Step4: エリアのアイコン表示 (2.3s)
-  setTimeout(() => {
-    emoji.textContent = info.e;
-    emoji.style.animation = "none";
-    emoji.offsetHeight;
-    emoji.style.animation = "chestIn .4s cubic-bezier(.34,1.56,.64,1)";
-    openTxt.textContent = "🎊 " + info.a + " にとうちゃく！";
-    subTxt.textContent = info.m;
-    btn.style.display = "block";
-
-    // ゴールドコンフェティ
-    spawnGoldConfetti();
-  }, 2300);
-}
-
-function spawnSparkles(parent) {
-  const sparkleEmojis = ["✨","⭐","🌟","💫","⚡","🔥","💎","🎇"];
-  for (let i = 0; i < 10; i++) {
-    setTimeout(() => {
-      const s = document.createElement("span");
-      s.className = "chest-sparkle";
-      const angle = (i / 10) * 360;
-      const dist = 60 + Math.random() * 60;
-      const sx = Math.cos(angle * Math.PI / 180) * dist + "px";
-      const sy = Math.sin(angle * Math.PI / 180) * dist + "px";
-      s.style.cssText = `left:50%;top:50%;--sx:${sx};--sy:${sy};animation-duration:${0.6+Math.random()*0.4}s;animation-delay:${Math.random()*0.3}s;`;
-      s.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
-      parent.appendChild(s);
-      setTimeout(() => s.remove(), 1200);
-    }, i * 60);
-  }
-}
-
-function spawnGoldConfetti() {
-  const w = document.getElementById("cf");
-  w.style.display = "block";
-  const cols = ["#FFD93D","#FF6B6B","#6BCB77","#FFD700","#FFA500","#C77DFF","#FF9ECD"];
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement("div");
-    p.className = "cp";
-    const sz = 7 + Math.random() * 12;
-    p.style.cssText = `left:${Math.random()*100}%;top:-20px;width:${sz}px;height:${sz}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?"50%":"3px"};animation-duration:${1.2+Math.random()*1.8}s;animation-delay:${Math.random()*0.6}s;`;
-    w.appendChild(p);
-  }
-  setTimeout(() => { w.style.display = "none"; w.innerHTML = ""; }, 4000);
-}
-
-function closeChest() {
-  document.getElementById("chestOverlay").classList.remove("open");
-}
-
 function popup(n,info,done,cur,locked,cl,c){
   correct=c;
-
-  // ロックされていて「今まさに解放された」マス（次のマス＝cl+1）ではない locked マス
-  // → 普通のロックポップアップ
-  // cur（現在のマス）→ 普通のポップアップ
-  // done → クリア済みポップアップ
-  // locked かつ n === cl+1 → 宝箱演出（※通常は起こらないが念のため）
-  
-  if(locked){
-    // ロックされたマスは通常のポップアップ
-    document.getElementById("pEmoji").textContent="🔒";
-    document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
-    document.getElementById("pSub").textContent="あと"+((n-cl-1)*CPR+(CPR-c%CPR))+"こせいかいするとひらくよ！🔑";
-    document.getElementById("popup").classList.add("open");
-  } else if(cur){
-    // 現在マス：宝箱演出を表示
-    showChestAnimation(info, n, cl, c);
-  } else {
-    // クリア済み：通常ポップアップ
-    document.getElementById("pEmoji").textContent=info.e;
-    document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
-    document.getElementById("pSub").textContent="✅ クリアずみ！\n"+info.m;
-    document.getElementById("popup").classList.add("open");
-  }
+  document.getElementById("pEmoji").textContent=locked?"🔒":info.e;
+  document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
+  document.getElementById("pSub").textContent=
+    locked?("あと"+((n-cl-1)*CPR+(CPR-c%CPR))+"こせいかいするとひらくよ！🔑"):
+    cur?"👈 いまここ！\n"+info.m:
+    "✅ クリアずみ！\n"+info.m;
+  document.getElementById("popup").classList.add("open");
 }
 function closePopup(){document.getElementById("popup").classList.remove("open")}
 document.getElementById("popup").addEventListener("click",e=>{if(e.target===e.currentTarget)closePopup()});
