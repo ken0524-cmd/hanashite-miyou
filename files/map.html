@@ -19,7 +19,6 @@ body {
   align-items:center;
 }
 
-/* ヘッダー */
 header {
   width:100%;max-width:540px;
   padding:.8rem 1rem .5rem;
@@ -51,7 +50,6 @@ header {
   font-size:.68rem;font-weight:700;color:rgba(255,255,255,.9);
 }
 
-/* マップラッパー */
 .map-wrap {
   width:100%;max-width:540px;
   position:relative;
@@ -67,7 +65,6 @@ header {
     0 0 0 7px rgba(0,0,0,.3),
     0 16px 40px rgba(0,0,0,.5);
   position:relative;
-  /* 古地図風の枠 */
   border:3px solid #8a6030;
 }
 .map-frame::before {
@@ -81,7 +78,6 @@ header {
   display:block;width:100%;height:auto;
 }
 
-/* 下パネル */
 .bottom-panel {
   width:100%;max-width:540px;
   padding:.5rem .7rem .8rem;
@@ -134,19 +130,17 @@ header {
 }
 .btn-k:hover{background:rgba(255,255,255,.2)}
 
-/* ゴールバナー */
 .goal-banner {
   display:none;
-  background:linear-gradient(135deg,#7a5a00,#c8a000);
-  border:2px solid #FFD93D;
+  background:linear-gradient(135deg,#1a5a00,#3a9800);
+  border:2px solid #6BCB77;
   border-radius:14px;padding:.7rem;text-align:center;
-  box-shadow:0 0 20px rgba(255,210,0,.4);
+  box-shadow:0 0 20px rgba(100,200,80,.4);
 }
 .goal-banner.show{display:block}
-.goal-banner .gt{font-size:1rem;font-weight:900;color:#FFD93D}
-.goal-banner .gs{font-size:.7rem;color:rgba(255,220,100,.8)}
+.goal-banner .gt{font-size:1rem;font-weight:900;color:#c0ff90}
+.goal-banner .gs{font-size:.7rem;color:rgba(180,255,140,.8)}
 
-/* ポップアップ */
 .popup {
   position:fixed;inset:0;z-index:100;
   display:none;align-items:center;justify-content:center;
@@ -174,7 +168,6 @@ header {
 }
 .popup-close:hover{transform:translateY(-2px)}
 
-/* コンフェッティ */
 .cf{position:fixed;inset:0;pointer-events:none;z-index:200;display:none}
 .cp{position:absolute;animation:cpF linear forwards}
 @keyframes cpF{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
@@ -206,42 +199,28 @@ header {
 
 <div class="map-wrap">
   <div class="map-frame">
-    <!-- ===== SVGマップ本体 ===== -->
     <svg id="mapSvg" viewBox="0 0 500 680" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <!-- 海のグラデーション -->
         <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#1a6aa0"/>
           <stop offset="100%" stop-color="#0d4a78"/>
         </linearGradient>
-        <!-- 地面グラデーション -->
         <radialGradient id="landGrad" cx="50%" cy="50%" r="60%">
           <stop offset="0%" stop-color="#8dc840"/>
           <stop offset="100%" stop-color="#5a9820"/>
         </radialGradient>
-        <!-- 砂漠グラデーション -->
         <linearGradient id="desertGrad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#e8c870"/>
           <stop offset="100%" stop-color="#c8a040"/>
         </linearGradient>
-        <!-- 雪山グラデーション -->
         <linearGradient id="snowGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#ffffff"/>
           <stop offset="100%" stop-color="#b0d0e8"/>
         </linearGradient>
-        <!-- 森グラデーション -->
         <radialGradient id="forestGrad" cx="50%" cy="30%" r="70%">
           <stop offset="0%" stop-color="#3a9820"/>
           <stop offset="100%" stop-color="#206010"/>
         </radialGradient>
-        <!-- 古地図テクスチャ風のフィルタ -->
-        <filter id="parchment">
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
-          <feColorMatrix type="saturate" values="0"/>
-          <feBlend in="SourceGraphic" mode="multiply" result="blend"/>
-          <feComposite in="blend" in2="SourceGraphic" operator="in"/>
-        </filter>
-        <!-- 光彩フィルタ -->
         <filter id="glow">
           <feGaussianBlur stdDeviation="3" result="blur"/>
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -252,312 +231,263 @@ header {
         </filter>
       </defs>
 
-      <!-- ===== 海（背景） ===== -->
+      <!-- 海（背景） -->
       <rect width="500" height="680" fill="url(#seaGrad)"/>
-
-      <!-- 海の模様 -->
       <path d="M0,80 Q60,65 120,80 Q180,95 240,78 Q300,62 360,78 Q420,94 500,76" stroke="rgba(100,180,255,.18)" stroke-width="2.5" fill="none"/>
-      <path d="M0,160 Q80,148 160,163 Q240,178 320,161 Q400,145 500,162" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
-      <path d="M0,340 Q70,328 150,345 Q230,362 320,340 Q410,320 500,338" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
-      <path d="M0,480 Q90,468 180,482 Q270,496 360,478 Q430,464 500,480" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
+      <path d="M0,200 Q80,188 160,203 Q240,218 320,200 Q400,184 500,201" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
+      <path d="M0,450 Q90,438 180,452 Q270,466 360,448 Q430,434 500,450" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
       <path d="M0,600 Q100,588 200,604 Q300,620 400,602 Q450,594 500,605" stroke="rgba(100,180,255,.13)" stroke-width="2" fill="none"/>
-
-      <!-- 海の泡（小さい点） -->
+      <!-- 海の泡 -->
       <circle cx="40" cy="110" r="3" fill="rgba(255,255,255,.2)"/>
       <circle cx="70" cy="95" r="2" fill="rgba(255,255,255,.18)"/>
       <circle cx="460" cy="200" r="3" fill="rgba(255,255,255,.2)"/>
       <circle cx="430" cy="185" r="2" fill="rgba(255,255,255,.15)"/>
       <circle cx="55" cy="520" r="3" fill="rgba(255,255,255,.18)"/>
       <circle cx="470" cy="540" r="2.5" fill="rgba(255,255,255,.2)"/>
-      <circle cx="30" cy="400" r="2" fill="rgba(255,255,255,.15)"/>
-      <circle cx="480" cy="380" r="3" fill="rgba(255,255,255,.18)"/>
 
-      <!-- ===== メイン大陸 ===== -->
+      <!-- メイン大陸 -->
       <path d="
-        M 95,55
-        C 140,35 210,28 285,42
-        C 360,56 420,85 445,130
-        C 468,172 458,215 445,255
-        C 432,296 412,328 420,372
-        C 428,416 455,448 448,498
-        C 440,548 400,585 345,600
-        C 290,615 230,608 185,588
-        C 140,568 108,535 90,495
-        C 72,455 68,410 65,368
-        C 62,325 72,290 63,252
-        C 54,215 30,188 35,148
-        C 40,108 60,72 95,55 Z
+        M 90,45
+        C 145,25 220,20 300,35
+        C 375,50 430,82 450,128
+        C 468,172 455,218 440,258
+        C 425,298 408,330 418,375
+        C 428,418 458,450 450,500
+        C 440,550 398,590 340,605
+        C 282,620 218,612 170,590
+        C 122,568 92,532 76,492
+        C 60,450 62,405 58,362
+        C 54,318 70,285 60,248
+        C 50,210 28,182 33,142
+        C 38,102 58,65 90,45 Z
       " fill="url(#landGrad)" opacity="1"/>
-
-      <!-- 大陸の縁取り（海岸線） -->
       <path d="
-        M 95,55
-        C 140,35 210,28 285,42
-        C 360,56 420,85 445,130
-        C 468,172 458,215 445,255
-        C 432,296 412,328 420,372
-        C 428,416 455,448 448,498
-        C 440,548 400,585 345,600
-        C 290,615 230,608 185,588
-        C 140,568 108,535 90,495
-        C 72,455 68,410 65,368
-        C 62,325 72,290 63,252
-        C 54,215 30,188 35,148
-        C 40,108 60,72 95,55 Z
+        M 90,45
+        C 145,25 220,20 300,35
+        C 375,50 430,82 450,128
+        C 468,172 455,218 440,258
+        C 425,298 408,330 418,375
+        C 428,418 458,450 450,500
+        C 440,550 398,590 340,605
+        C 282,620 218,612 170,590
+        C 122,568 92,532 76,492
+        C 60,450 62,405 58,362
+        C 54,318 70,285 60,248
+        C 50,210 28,182 33,142
+        C 38,102 58,65 90,45 Z
       " fill="none" stroke="#6aa030" stroke-width="2.5" opacity=".6"/>
 
-      <!-- 浅瀬（海岸の色薄いエリア） -->
-      <path d="
-        M 105,62
-        C 145,44 210,36 282,49
-        C 355,62 412,90 436,133
-        C 457,174 448,213 436,250
-        C 424,288 406,320 414,362
-        C 421,404 447,436 440,484
-        C 432,534 395,570 342,584
-        C 291,598 234,592 192,574
-        C 153,556 125,525 109,487
-        C 94,449 90,407 88,366
-        C 86,326 95,292 87,256
-        C 80,221 57,196 61,157
-        C 66,118 82,80 105,62 Z
-      " fill="rgba(130,200,80,.12)" stroke="rgba(130,220,80,.3)" stroke-width="1"/>
+      <!-- ===== 地形ゾーン（上から：もり→うみ→さばく→やま→おしろ）===== -->
 
-      <!-- ===== 地形ゾーン ===== -->
-
-      <!-- 🌲 もりゾーン（北部） -->
-      <ellipse cx="200" cy="120" rx="125" ry="72" fill="#2a7818" opacity=".75"/>
-
-      <!-- 木（もりゾーン内） -->
+      <!-- 🌲 もりゾーン（北部・ゴール） -->
+      <ellipse cx="200" cy="110" rx="130" ry="78" fill="#2a7818" opacity=".8"/>
+      <!-- 木 -->
       <g opacity=".95">
-        <!-- 大きい木 -->
-        <polygon points="118,148 108,175 128,175" fill="#1a5a10"/>
-        <polygon points="118,138 105,162 131,162" fill="#228018"/>
-        <polygon points="118,128 107,152 129,152" fill="#2a9020"/>
-        <rect x="115" y="175" width="6" height="8" fill="#6a3a10"/>
+        <polygon points="115,142 105,170 125,170" fill="#1a5a10"/>
+        <polygon points="115,130 102,156 128,156" fill="#228018"/>
+        <polygon points="115,118 104,142 126,142" fill="#2a9020"/>
+        <rect x="112" y="170" width="6" height="8" fill="#6a3a10"/>
 
-        <polygon points="145,140 135,165 155,165" fill="#1a5a10"/>
-        <polygon points="145,130 132,155 158,155" fill="#228018"/>
-        <polygon points="145,120 134,144 156,144" fill="#2a9020"/>
-        <rect x="142" y="165" width="6" height="8" fill="#6a3a10"/>
+        <polygon points="148,135 138,162 158,162" fill="#1a5a10"/>
+        <polygon points="148,123 135,148 161,148" fill="#228018"/>
+        <polygon points="148,112 137,136 159,136" fill="#2a9020"/>
+        <rect x="145" y="162" width="6" height="8" fill="#6a3a10"/>
 
-        <polygon points="175,155 165,178 185,178" fill="#1a5a10"/>
-        <polygon points="175,144 163,167 187,167" fill="#228018"/>
-        <polygon points="175,134 164,157 186,157" fill="#2a9020"/>
-        <rect x="172" y="178" width="6" height="8" fill="#6a3a10"/>
+        <polygon points="180,148 170,174 190,174" fill="#1a5a10"/>
+        <polygon points="180,136 168,160 192,160" fill="#228018"/>
+        <polygon points="180,125 169,148 191,148" fill="#2a9020"/>
+        <rect x="177" y="174" width="6" height="8" fill="#6a3a10"/>
 
-        <polygon points="205,145 195,170 215,170" fill="#1a5a10"/>
-        <polygon points="205,135 193,158 217,158" fill="#228018"/>
-        <polygon points="205,125 194,148 216,148" fill="#2a9020"/>
-        <rect x="202" y="170" width="6" height="8" fill="#6a3a10"/>
+        <polygon points="215,138 205,164 225,164" fill="#1a5a10"/>
+        <polygon points="215,126 203,150 227,150" fill="#228018"/>
+        <polygon points="215,115 204,138 226,138" fill="#2a9020"/>
+        <rect x="212" y="164" width="6" height="8" fill="#6a3a10"/>
 
-        <polygon points="235,150 225,175 245,175" fill="#1a5a10"/>
-        <polygon points="235,140 223,163 247,163" fill="#228018"/>
-        <polygon points="235,130 224,153 246,153" fill="#2a9020"/>
-        <rect x="232" y="175" width="6" height="8" fill="#6a3a10"/>
+        <polygon points="250,145 240,170 260,170" fill="#1a5a10"/>
+        <polygon points="250,133 238,157 262,157" fill="#228018"/>
+        <polygon points="250,122 239,145 261,145" fill="#2a9020"/>
+        <rect x="247" y="170" width="6" height="8" fill="#6a3a10"/>
 
-        <polygon points="265,142 255,167 275,167" fill="#1a5a10"/>
-        <polygon points="265,132 253,155 277,155" fill="#228018"/>
-        <polygon points="265,122 254,145 276,145" fill="#2a9020"/>
-        <rect x="262" y="167" width="6" height="8" fill="#6a3a10"/>
+        <polygon points="282,136 272,160 292,160" fill="#1a5a10"/>
+        <polygon points="282,124 270,147 294,147" fill="#228018"/>
+        <polygon points="282,113 271,136 293,136" fill="#2a9020"/>
+        <rect x="279" y="160" width="6" height="8" fill="#6a3a10"/>
 
-        <polygon points="158,105 148,128 168,128" fill="#228018"/>
-        <polygon points="158,95 147,118 169,118" fill="#2a9020"/>
-        <rect x="155" y="128" width="6" height="7" fill="#6a3a10"/>
+        <polygon points="160,96 150,118 170,118" fill="#228018"/>
+        <polygon points="160,85 149,108 171,108" fill="#2a9020"/>
+        <rect x="157" y="118" width="6" height="7" fill="#6a3a10"/>
 
-        <polygon points="240,105 230,128 250,128" fill="#228018"/>
-        <polygon points="240,95 229,118 251,118" fill="#2a9020"/>
-        <rect x="237" y="128" width="6" height="7" fill="#6a3a10"/>
+        <polygon points="245,98 235,120 255,120" fill="#228018"/>
+        <polygon points="245,87 234,110 256,110" fill="#2a9020"/>
+        <rect x="242" y="120" width="6" height="7" fill="#6a3a10"/>
       </g>
 
-      <!-- 🏔️ 雪山ゾーン（左中） -->
-      <ellipse cx="135" cy="355" rx="88" ry="95" fill="#6888a8" opacity=".7"/>
-
-      <!-- 山 -->
-      <polygon points="100,440 65,310 135,310" fill="#7a9abc"/>
-      <polygon points="100,440 72,350 128,350" fill="#8aacce"/>
-      <polygon points="65,310 100,440 73,440" fill="#6a8aaa"/>
-      <!-- 雪 -->
-      <polygon points="100,310 80,355 120,355" fill="white" opacity=".92"/>
-      <polygon points="100,310 88,336 112,336" fill="white"/>
-
-      <polygon points="148,440 118,325 178,325" fill="#7090b0"/>
-      <polygon points="148,440 122,375 174,375" fill="#8aacce"/>
-      <!-- 雪 -->
-      <polygon points="148,325 130,368 166,368" fill="white" opacity=".88"/>
-      <polygon points="148,325 136,350 160,350" fill="white"/>
-
-      <!-- 小石 -->
-      <ellipse cx="82" cy="438" rx="12" ry="5" fill="#5a7090" opacity=".6"/>
-      <ellipse cx="170" cy="436" rx="10" ry="4" fill="#5a7090" opacity=".6"/>
+      <!-- 🌊 うみのほとりゾーン（右上） -->
+      <ellipse cx="385" cy="215" rx="78" ry="80" fill="#2060a8" opacity=".55"/>
+      <!-- さんご・波 -->
+      <path d="M330,255 Q355,240 380,252 Q405,264 430,248" stroke="#60c0ff" stroke-width="2.5" fill="none" opacity=".7"/>
+      <path d="M335,268 Q362,255 390,265 Q415,276 435,260" stroke="#60c0ff" stroke-width="2" fill="none" opacity=".5"/>
+      <circle cx="360" cy="230" r="5" fill="#FF9ECD" opacity=".7"/>
+      <circle cx="378" cy="222" r="4" fill="#FF6B6B" opacity=".6"/>
+      <circle cx="395" cy="235" r="6" fill="#FF9ECD" opacity=".65"/>
+      <circle cx="412" cy="225" r="4" fill="#C77DFF" opacity=".55"/>
+      <!-- ヤシの木 -->
+      <rect x="342" y="185" width="5" height="40" rx="2.5" fill="#6a3a10"/>
+      <ellipse cx="344" cy="185" rx="20" ry="10" fill="#2a8020" opacity=".9" transform="rotate(-20,344,185)"/>
+      <ellipse cx="344" cy="185" rx="18" ry="9" fill="#3a9830" opacity=".8" transform="rotate(10,344,185)"/>
+      <ellipse cx="344" cy="188" rx="16" ry="8" fill="#4ab040" opacity=".8" transform="rotate(-5,344,188)"/>
 
       <!-- 🏜️ 砂漠ゾーン（右中） -->
-      <ellipse cx="360" cy="310" rx="85" ry="105" fill="#c8a040" opacity=".75"/>
-
+      <ellipse cx="370" cy="370" rx="90" ry="100" fill="#c8a040" opacity=".75"/>
       <!-- 砂丘 -->
-      <path d="M295,370 Q330,345 365,360 Q400,375 430,355 L430,410 L295,410 Z" fill="#d4a800" opacity=".5"/>
-      <path d="M300,400 Q340,382 375,395 Q405,408 428,388 L428,430 L300,430 Z" fill="#c09800" opacity=".45"/>
-
+      <path d="M298,410 Q338,388 375,402 Q408,416 440,396 L440,450 L298,450 Z" fill="#d4a800" opacity=".45"/>
+      <path d="M305,440 Q345,422 382,436 Q412,450 440,430 L440,470 L305,470 Z" fill="#c09800" opacity=".4"/>
       <!-- サボテン -->
       <g fill="#5a8820">
-        <rect x="318" y="268" width="9" height="38" rx="4.5"/>
-        <rect x="303" y="278" width="24" height="8" rx="4"/>
-        <rect x="296" y="264" width="9" height="24" rx="4.5"/>
-        <rect x="327" y="290" width="24" height="8" rx="4"/>
-        <rect x="342" y="276" width="9" height="22" rx="4.5"/>
+        <rect x="318" y="315" width="9" height="38" rx="4.5"/>
+        <rect x="303" y="325" width="24" height="8" rx="4"/>
+        <rect x="296" y="310" width="9" height="24" rx="4.5"/>
+        <rect x="327" y="336" width="24" height="8" rx="4"/>
+        <rect x="342" y="322" width="9" height="22" rx="4.5"/>
       </g>
       <g fill="#5a8820">
-        <rect x="385" y="280" width="8" height="32" rx="4"/>
-        <rect x="372" y="289" width="21" height="7" rx="3.5"/>
-        <rect x="365" y="276" width="8" height="20" rx="4"/>
-        <rect x="393" y="294" width="21" height="7" rx="3.5"/>
-        <rect x="401" y="282" width="8" height="18" rx="4"/>
+        <rect x="400" y="328" width="8" height="32" rx="4"/>
+        <rect x="387" y="337" width="21" height="7" rx="3.5"/>
+        <rect x="408" y="342" width="21" height="7" rx="3.5"/>
+      </g>
+      <ellipse cx="345" cy="398" rx="15" ry="7" fill="#9a7820" opacity=".6"/>
+      <ellipse cx="415" cy="412" rx="11" ry="5" fill="#9a7820" opacity=".5"/>
+
+      <!-- 🏔️ 雪山ゾーン（左中） -->
+      <ellipse cx="128" cy="430" rx="88" ry="90" fill="#6888a8" opacity=".7"/>
+      <polygon points="95,510 62,380 128,380" fill="#7a9abc"/>
+      <polygon points="95,510 70,420 120,420" fill="#8aacce"/>
+      <polygon points="62,380 95,510 70,510" fill="#6a8aaa"/>
+      <polygon points="95,380 75,425 115,425" fill="white" opacity=".92"/>
+      <polygon points="95,380 83,406 107,406" fill="white"/>
+      <polygon points="145,510 115,398 175,398" fill="#7090b0"/>
+      <polygon points="145,510 120,445 170,445" fill="#8aacce"/>
+      <polygon points="145,398 127,440 163,440" fill="white" opacity=".88"/>
+      <polygon points="145,398 133,422 157,422" fill="white"/>
+      <ellipse cx="80" cy="508" rx="12" ry="5" fill="#5a7090" opacity=".6"/>
+      <ellipse cx="168" cy="506" rx="10" ry="4" fill="#5a7090" opacity=".6"/>
+
+      <!-- 🏰 おしろゾーン（南・スタート） -->
+      <ellipse cx="265" cy="570" rx="115" ry="85" fill="#7050a0" opacity=".65"/>
+      <g transform="translate(228,520)">
+        <rect x="0" y="55" width="80" height="55" rx="3" fill="#8060b0"/>
+        <rect x="0" y="55" width="80" height="55" rx="3" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+        <rect x="-12" y="36" width="24" height="58" rx="3" fill="#6a4a98"/>
+        <rect x="68" y="36" width="24" height="58" rx="3" fill="#6a4a98"/>
+        <rect x="30" y="16" width="20" height="46" rx="2" fill="#7858a8"/>
+        <polygon points="-12,36 0,12 12,36" fill="#5a3888"/>
+        <polygon points="68,36 80,12 92,36" fill="#5a3888"/>
+        <polygon points="30,16 40,−2 50,16" fill="#6848a0"/>
+        <rect x="39" y="-2" width="3" height="20" fill="#4a2870"/>
+        <polygon points="42,-2 42,9 55,3.5" fill="#FF6B6B"/>
+        <rect x="-5" y="12" width="3" height="16" fill="#4a2870"/>
+        <polygon points="-2,12 -2,20 10,16" fill="#FFD93D"/>
+        <rect x="79" y="12" width="3" height="16" fill="#4a2870"/>
+        <polygon points="82,12 82,20 94,16" fill="#FFD93D"/>
+        <path d="M32,110 L32,84 Q40,73 48,84 L48,110 Z" fill="#2a1040"/>
+        <rect x="5" y="65" width="11" height="13" rx="2" fill="#2a1040"/>
+        <rect x="64" y="65" width="11" height="13" rx="2" fill="#2a1040"/>
+        <rect x="33" y="38" width="12" height="13" rx="2" fill="#2a1040"/>
+        <rect x="0" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+        <rect x="13" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+        <rect x="58" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+        <rect x="71" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
       </g>
 
-      <!-- 砂漠の石 -->
-      <ellipse cx="340" cy="345" rx="15" ry="7" fill="#9a7820" opacity=".6"/>
-      <ellipse cx="400" cy="360" rx="11" ry="5" fill="#9a7820" opacity=".5"/>
-
-      <!-- 🏰 おしろゾーン（南） -->
-      <ellipse cx="265" cy="525" rx="105" ry="82" fill="#7050a0" opacity=".65"/>
-
-      <!-- お城 本体 -->
-      <g transform="translate(230,468)">
-        <!-- 城壁基部 -->
-        <rect x="0" y="55" width="75" height="52" rx="3" fill="#8060b0"/>
-        <rect x="0" y="55" width="75" height="52" rx="3" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
-        <!-- 左塔 -->
-        <rect x="-10" y="38" width="22" height="55" rx="3" fill="#6a4a98"/>
-        <!-- 右塔 -->
-        <rect x="63" y="38" width="22" height="55" rx="3" fill="#6a4a98"/>
-        <!-- 中央の高い塔 -->
-        <rect x="28" y="20" width="19" height="42" rx="2" fill="#7858a8"/>
-        <!-- 塔の屋根（三角） -->
-        <polygon points="-10,38 1,15 12,38" fill="#5a3888"/>
-        <polygon points="63,38 74,15 85,38" fill="#5a3888"/>
-        <polygon points="28,20 37.5,2 47,20" fill="#6848a0"/>
-        <!-- 旗 -->
-        <rect x="37" y="2" width="3" height="18" fill="#4a2870"/>
-        <polygon points="40,2 40,11 52,6.5" fill="#FF6B6B"/>
-        <rect x="-3" y="15" width="3" height="14" fill="#4a2870"/>
-        <polygon points="0,15 0,22 10,18.5" fill="#FFD93D"/>
-        <rect x="72" y="15" width="3" height="14" fill="#4a2870"/>
-        <polygon points="75,15 75,22 85,18.5" fill="#FFD93D"/>
-        <!-- 城門 -->
-        <path d="M30,107 L30,82 Q37.5,72 45,82 L45,107 Z" fill="#2a1040"/>
-        <!-- 窓 -->
-        <rect x="5" y="65" width="10" height="12" rx="2 2 0 0" fill="#2a1040"/>
-        <rect x="60" y="65" width="10" height="12" rx="2 2 0 0" fill="#2a1040"/>
-        <rect x="32" y="40" width="11" height="12" rx="2 2 0 0" fill="#2a1040"/>
-        <!-- 城壁ギザギザ -->
-        <rect x="0" y="47" width="8" height="10" rx="1" fill="#6a4a98"/>
-        <rect x="12" y="47" width="8" height="10" rx="1" fill="#6a4a98"/>
-        <rect x="55" y="47" width="8" height="10" rx="1" fill="#6a4a98"/>
-        <rect x="67" y="47" width="8" height="10" rx="1" fill="#6a4a98"/>
-      </g>
-
-      <!-- ===== 小島・飾り ===== -->
-      <!-- 右下の小島 -->
-      <ellipse cx="445" cy="590" rx="32" ry="20" fill="#6a9830"/>
-      <polygon points="445,574 434,592 456,592" fill="#2a6010"/>
-      <polygon points="445,568 436,584 454,584" fill="#3a8020"/>
-      <rect x="442" y="592" width="6" height="5" fill="#5a3010"/>
-
-      <!-- 左下の小島 -->
+      <!-- 小島・飾り -->
+      <ellipse cx="448" cy="590" rx="32" ry="20" fill="#6a9830"/>
+      <polygon points="448,574 437,592 459,592" fill="#2a6010"/>
+      <polygon points="448,568 439,584 457,584" fill="#3a8020"/>
+      <rect x="445" y="592" width="6" height="5" fill="#5a3010"/>
       <ellipse cx="42" cy="610" rx="26" ry="16" fill="#6a9830"/>
       <polygon points="42,597 32,613 52,613" fill="#2a6010"/>
       <polygon points="42,591 34,607 50,607" fill="#3a8020"/>
-
-      <!-- 右上の小島 -->
       <ellipse cx="465" cy="110" rx="22" ry="14" fill="#6a9830"/>
       <polygon points="465,99 456,113 474,113" fill="#3a8020"/>
 
-      <!-- ===== くねくね道 ===== -->
+      <!-- ===== くねくね道（森スタート→お城ゴール）===== -->
       <!-- 道の影 -->
       <path d="
-        M 215,645
-        C 225,622 240,612 248,598
-        C 258,580 245,560 255,542
-        C 267,522 298,515 308,496
-        C 320,475 305,452 302,432
-        C 298,410 316,395 326,375
-        C 338,350 336,318 354,295
-        C 372,272 408,262 422,238
-        C 437,213 422,186 406,165
-        C 390,144 360,136 332,126
-        C 308,118 280,112 258,98
-        C 236,84 225,62 206,52
-        C 192,44 172,43 163,54
-      " stroke="rgba(0,0,0,.35)" stroke-width="22" fill="none"
+        M 255,632
+        C 240,610 210,600 195,582
+        C 178,562 192,538 178,516
+        C 162,492 130,486 115,462
+        C 98,436 110,408 105,382
+        C 100,356 75,338 80,310
+        C 85,282 118,268 128,242
+        C 140,214 126,184 140,158
+        C 155,130 192,118 215,96
+        C 235,76 240,55 258,42
+      " stroke="rgba(0,0,0,.38)" stroke-width="24" fill="none"
         stroke-linecap="round" stroke-linejoin="round"
         transform="translate(3,5)"/>
 
       <!-- 道の縁 -->
       <path d="
-        M 215,645
-        C 225,622 240,612 248,598
-        C 258,580 245,560 255,542
-        C 267,522 298,515 308,496
-        C 320,475 305,452 302,432
-        C 298,410 316,395 326,375
-        C 338,350 336,318 354,295
-        C 372,272 408,262 422,238
-        C 437,213 422,186 406,165
-        C 390,144 360,136 332,126
-        C 308,118 280,112 258,98
-        C 236,84 225,62 206,52
-        C 192,44 172,43 163,54
-      " stroke="#6a4a10" stroke-width="22" fill="none"
+        M 255,632
+        C 240,610 210,600 195,582
+        C 178,562 192,538 178,516
+        C 162,492 130,486 115,462
+        C 98,436 110,408 105,382
+        C 100,356 75,338 80,310
+        C 85,282 118,268 128,242
+        C 140,214 126,184 140,158
+        C 155,130 192,118 215,96
+        C 235,76 240,55 258,42
+      " stroke="#6a4a10" stroke-width="24" fill="none"
         stroke-linecap="round" stroke-linejoin="round"/>
 
       <!-- 道本体 -->
       <path id="roadPath" d="
-        M 215,645
-        C 225,622 240,612 248,598
-        C 258,580 245,560 255,542
-        C 267,522 298,515 308,496
-        C 320,475 305,452 302,432
-        C 298,410 316,395 326,375
-        C 338,350 336,318 354,295
-        C 372,272 408,262 422,238
-        C 437,213 422,186 406,165
-        C 390,144 360,136 332,126
-        C 308,118 280,112 258,98
-        C 236,84 225,62 206,52
-        C 192,44 172,43 163,54
-      " stroke="#e8d088" stroke-width="16" fill="none"
+        M 255,632
+        C 240,610 210,600 195,582
+        C 178,562 192,538 178,516
+        C 162,492 130,486 115,462
+        C 98,436 110,408 105,382
+        C 100,356 75,338 80,310
+        C 85,282 118,268 128,242
+        C 140,214 126,184 140,158
+        C 155,130 192,118 215,96
+        C 235,76 240,55 258,42
+      " stroke="#e8d088" stroke-width="17" fill="none"
         stroke-linecap="round" stroke-linejoin="round"/>
 
       <!-- 道の点線（中央） -->
       <path d="
-        M 215,645
-        C 225,622 240,612 248,598
-        C 258,580 245,560 255,542
-        C 267,522 298,515 308,496
-        C 320,475 305,452 302,432
-        C 298,410 316,395 326,375
-        C 338,350 336,318 354,295
-        C 372,272 408,262 422,238
-        C 437,213 422,186 406,165
-        C 390,144 360,136 332,126
-        C 308,118 280,112 258,98
-        C 236,84 225,62 206,52
-        C 192,44 172,43 163,54
+        M 255,632
+        C 240,610 210,600 195,582
+        C 178,562 192,538 178,516
+        C 162,492 130,486 115,462
+        C 98,436 110,408 105,382
+        C 100,356 75,338 80,310
+        C 85,282 118,268 128,242
+        C 140,214 126,184 140,158
+        C 155,130 192,118 215,96
+        C 235,76 240,55 258,42
       " stroke="rgba(255,255,255,.45)" stroke-width="3.5" fill="none"
         stroke-linecap="round" stroke-dasharray="10,13"/>
 
-      <!-- ===== スタートフラッグ ===== -->
-      <g transform="translate(204,640)" filter="url(#glow)">
-        <rect x="-1" y="-28" width="4" height="30" rx="2" fill="#5a3010"/>
-        <polygon points="3,-28 3,-14 17,-21" fill="#FF6B6B"/>
-        <circle cx="1.5" cy="4" r="8" fill="#FFD93D" stroke="white" stroke-width="2.5"/>
-        <text x="1.5" y="8" text-anchor="middle" font-size="9" font-family="sans-serif" font-weight="bold" fill="#3a2000">S</text>
+      <!-- ===== スタートフラッグ（森・上）===== -->
+      <g transform="translate(258,48)" filter="url(#glow)">
+        <rect x="-2" y="-30" width="4" height="32" rx="2" fill="#5a3010"/>
+        <polygon points="2,-30 2,-15 18,-22.5" fill="#6BCB77"/>
+        <circle cx="0" cy="6" r="9" fill="#FFD93D" stroke="white" stroke-width="2.5"/>
+        <text x="0" y="10" text-anchor="middle" font-size="9" font-family="sans-serif" font-weight="bold" fill="#3a2000">S</text>
       </g>
 
-      <!-- ===== ゴール王冠 ===== -->
-      <g id="goalMarker" transform="translate(163,54)">
-        <circle cx="0" cy="0" r="24" fill="#1a6000" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
-        <text x="0" y="9" text-anchor="middle" font-size="22">🏆</text>
+      <!-- ===== ゴール（お城・下）===== -->
+      <g id="goalMarker" transform="translate(255,632)">
+        <circle cx="0" cy="0" r="26" fill="#5a3888" stroke="rgba(255,255,255,.35)" stroke-width="2.5"/>
+        <text x="0" y="10" text-anchor="middle" font-size="24">🏆</text>
+        <circle cx="0" cy="0" r="30" fill="none" stroke="#FFD93D" stroke-width="1.5" opacity="0.5">
+          <animate attributeName="r" values="28;36;28" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+        </circle>
       </g>
 
       <!-- ===== マスグループ（JS生成） ===== -->
@@ -569,26 +499,26 @@ header {
         <text id="mEmoji" x="0" y="-2" text-anchor="middle" font-size="24" filter="url(#glow)">🐾</text>
       </g>
 
-      <!-- ===== 地名ラベル ===== -->
-      <!-- もりラベル -->
-      <g transform="translate(200,68)">
-        <rect x="-36" y="-11" width="72" height="18" rx="6" fill="rgba(0,40,0,.55)"/>
-        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="9.5" fill="#90ee60" font-weight="bold">🌲 もりのみち</text>
+      <!-- 地名ラベル -->
+      <g transform="translate(200,62)">
+        <rect x="-40" y="-12" width="80" height="20" rx="7" fill="rgba(0,40,0,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#90ee60" font-weight="bold">🌲 もり スタート！</text>
       </g>
-      <!-- 雪山ラベル -->
-      <g transform="translate(130,460)">
-        <rect x="-36" y="-11" width="72" height="18" rx="6" fill="rgba(0,20,60,.55)"/>
-        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="9.5" fill="#c0e8ff" font-weight="bold">⛰️ やまみち</text>
+      <g transform="translate(388,215)">
+        <rect x="-40" y="-12" width="80" height="20" rx="7" fill="rgba(0,30,80,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#80d8ff" font-weight="bold">🌊 うみのほとり</text>
       </g>
-      <!-- さばくラベル -->
-      <g transform="translate(360,380)">
-        <rect x="-34" y="-11" width="68" height="18" rx="6" fill="rgba(60,30,0,.55)"/>
-        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="9.5" fill="#ffe080" font-weight="bold">🏜️ さばく</text>
+      <g transform="translate(370,450)">
+        <rect x="-36" y="-12" width="72" height="20" rx="7" fill="rgba(60,30,0,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#ffe080" font-weight="bold">🏜️ さばく</text>
       </g>
-      <!-- おしろラベル -->
-      <g transform="translate(265,580)">
-        <rect x="-37" y="-11" width="74" height="18" rx="6" fill="rgba(30,0,60,.55)"/>
-        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="9.5" fill="#e0b8ff" font-weight="bold">🏰 おしろへ！</text>
+      <g transform="translate(128,510)">
+        <rect x="-38" y="-12" width="76" height="20" rx="7" fill="rgba(0,20,60,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#c0e8ff" font-weight="bold">⛰️ やまのみち</text>
+      </g>
+      <g transform="translate(265,640)">
+        <rect x="-38" y="-12" width="76" height="20" rx="7" fill="rgba(30,0,60,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#e0b8ff" font-weight="bold">🏰 おしろ ゴール！</text>
       </g>
 
       <!-- コンパス -->
@@ -602,14 +532,13 @@ header {
         <polygon points="0,15 -4,0 0,4 4,0" fill="rgba(255,255,255,.4)"/>
       </g>
 
-      <!-- スケール目盛り -->
+      <!-- スケール -->
       <g transform="translate(25,660)" opacity=".6">
         <rect x="0" y="-3" width="50" height="6" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
         <rect x="0" y="-3" width="25" height="6" fill="rgba(255,255,255,.4)"/>
         <text x="25" y="-6" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.7)">1にち</text>
       </g>
 
-      <!-- 装飾：羅針盤線 -->
       <g opacity=".06" stroke="white" stroke-width="1">
         <line x1="250" y1="0" x2="250" y2="680"/>
         <line x1="0" y1="340" x2="500" y2="340"/>
@@ -620,20 +549,17 @@ header {
 </div>
 
 <div class="bottom-panel">
-  <!-- ゴールバナー -->
   <div class="goal-banner" id="goalBanner">
-    <div class="gt">🏆 やったー！ぜんぶクリア！！ 🎊</div>
+    <div class="gt">🏰 やったー！おしろにとうちゃく！！ 🎊</div>
     <div class="gs">25まいのマスをぜんぶせいかした！すごい！</div>
   </div>
 
-  <!-- プログレス -->
   <div class="prog-card">
     <div class="prog-label" id="progLabel">スタート</div>
     <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
     <div class="prog-pct" id="progPct">0%</div>
   </div>
 
-  <!-- 次マスまで -->
   <div class="next-card" id="nextCard">
     <div class="next-icon" id="nextIcon">🎯</div>
     <div class="next-text">
@@ -643,7 +569,6 @@ header {
     </div>
   </div>
 
-  <!-- ボタン -->
   <div class="btn-row">
     <button class="nbtn btn-p" onclick="location.href='hanashite_miyou.html'">🎤 れんしゅうする！</button>
     <button class="nbtn btn-k" onclick="location.href='kiroku.html'">📒 きろくを見る</button>
@@ -652,44 +577,50 @@ header {
 
 <script>
 const SK = "hanashite_records_v2";
-const CPR = 5; // 正解5個で1マス
+const CPR = 5;
 const TOTAL = 25;
 
-// 25マスの座標（道の上）
+// 25マスの座標（森スタート→お城ゴール、くねくね道）
 const POS = [
-  {x:215,y:643},{x:230,y:618},{x:244,y:607},{x:252,y:593},{x:253,y:575},
-  {x:248,y:557},{x:256,y:540},{x:272,y:524},{x:295,y:514},{x:311,y:494},
-  {x:317,y:474},{x:307,y:453},{x:303,y:432},{x:306,y:412},{x:319,y:393},
-  {x:334,y:370},{x:339,y:344},{x:351,y:315},{x:366,y:289},{x:395,y:265},
-  {x:420,y:240},{x:430,y:213},{x:418,y:185},{x:401,y:162},{x:368,y:135},
+  // もりエリア（1-5）上から
+  {x:172,y:138},{x:148,y:162},{x:140,y:188},{x:138,y:216},{x:132,y:242},
+  // うみ→さばくエリア（6-10）
+  {x:122,y:268},{x:104,y:290},{x:86,y:312},{x:80,y:338},{x:82,y:362},
+  // さばくエリア（11-15）
+  {x:106,y:384},{x:108,y:408},{x:108,y:432},{x:107,y:456},{x:110,y:478},
+  // やまエリア（16-20）
+  {x:122,y:498},{x:148,y:510},{x:172,y:524},{x:180,y:542},{x:185,y:560},
+  // おしろエリア（21-25）
+  {x:197,y:576},{x:210,y:590},{x:226,y:600},{x:244,y:610},{x:255,y:630},
 ];
 
+// エリアとメッセージ（もり→うみ→さばく→やま→おしろ）
 const INFO = [
-  {e:"🌱",a:"もりのみち",m:"もりへようこそ！くうきがきれい！"},
-  {e:"🍄",a:"もりのみち",m:"きのこをみつけたよ！"},
-  {e:"🐿️",a:"もりのみち",m:"りすがとびはねてる！"},
-  {e:"🌿",a:"もりのみち",m:"みどりのしげみがいっぱい！"},
-  {e:"🌲",a:"もりのみち",m:"おおきなきがそびえてる！"},
-  {e:"🌊",a:"うみのほとり",m:"うみがみえてきた！なみがきれい！"},
-  {e:"🐚",a:"うみのほとり",m:"きれいなかいがらだ！"},
-  {e:"🐠",a:"うみのほとり",m:"いろんなさかながおよいでる！"},
+  {e:"🌲",a:"もりのみち",m:"もりからぼうけんのはじまり！さあ、しゅっぱつ！"},
+  {e:"🌿",a:"もりのみち",m:"みどりのしげみがいっぱい！きれいだね！"},
+  {e:"🐿️",a:"もりのみち",m:"りすがとびはねてる！かわいい！"},
+  {e:"🍄",a:"もりのみち",m:"きのこをみつけたよ！おもしろいね！"},
+  {e:"🌱",a:"もりのみち",m:"もりをぬけた！つぎはうみだ！"},
+  {e:"⛵",a:"うみのほとり",m:"うみがみえてきた！ふねがみえるよ！"},
   {e:"🦀",a:"うみのほとり",m:"かにがよこにはしってる！"},
-  {e:"⛵",a:"うみのほとり",m:"ちいさなふねがみえるよ！"},
-  {e:"🌵",a:"さばくのみち",m:"さばくにとうちゃく！あつい！"},
-  {e:"🦎",a:"さばくのみち",m:"とかげがいわのうえにいる！"},
-  {e:"🐪",a:"さばくのみち",m:"らくだにのれるかな？"},
+  {e:"🐠",a:"うみのほとり",m:"いろんなさかながおよいでる！"},
+  {e:"🐚",a:"うみのほとり",m:"きれいなかいがらだ！"},
+  {e:"🌊",a:"うみのほとり",m:"なみがきれい！うみをぬけた！"},
+  {e:"🌅",a:"さばくのみち",m:"さばくにとうちゃく！うつくしいゆうやけ！"},
   {e:"⭐",a:"さばくのみち",m:"よぞらにほしがかがやく！"},
-  {e:"🌅",a:"さばくのみち",m:"うつくしいゆうやけ！"},
-  {e:"❄️",a:"やまのみち",m:"さむくなってきた！ゆきだ！"},
-  {e:"🌸",a:"やまのみち",m:"さくらがさいてきれい！"},
+  {e:"🐪",a:"さばくのみち",m:"らくだにのれるかな？"},
+  {e:"🦎",a:"さばくのみち",m:"とかげがいわのうえにいる！"},
+  {e:"🌵",a:"さばくのみち",m:"さばくをぬけた！つぎはやまだ！"},
+  {e:"🗻",a:"やまのみち",m:"たかいやまにのぼるぞ！"},
+  {e:"🌈",a:"やまのみち",m:"にじがかかったよ！きれい！"},
   {e:"🦅",a:"やまのみち",m:"わしがおおぞらをとんでる！"},
-  {e:"🌈",a:"やまのみち",m:"にじがかかったよ！"},
-  {e:"🗻",a:"やまのみち",m:"さんちょうがみえてきた！もうすこし！"},
+  {e:"🌸",a:"やまのみち",m:"さくらがさいてきれい！"},
+  {e:"❄️",a:"やまのみち",m:"ゆきだ！やまをこえた！もうすぐおしろ！"},
+  {e:"🎉",a:"おしろへ！",m:"おしろがみえてきた！もうすこし！"},
+  {e:"🎊",a:"おしろへ！",m:"かみふぶきがとんでる！"},
   {e:"💎",a:"おしろへ！",m:"ひかるたからものをみつけた！"},
-  {e:"👑",a:"おしろへ！",m:"おうかんがかがやいてる！"},
-  {e:"🌟",a:"おしろへ！",m:"おおきなほし！ゴールはすぐそこ！"},
-  {e:"🎊",a:"おしろへ！",m:"かみふぶきがとんでる！もうすこし！"},
-  {e:"🎉",a:"おしろへ！",m:"さいごのマス！ゴールはすぐそこだ！"},
+  {e:"👑",a:"おしろへ！",m:"おうかんがかがやいてる！ゴールはすぐそこ！"},
+  {e:"🏰",a:"おしろへ！",m:"おしろにとうちゃく！やったー！！！"},
 ];
 
 function load(){try{return JSON.parse(localStorage.getItem(SK)||"[]")}catch(e){return[]}}
@@ -757,14 +688,12 @@ function drawSteps(cleared,isGoal){
     sg.style.cursor="pointer";
     sg.addEventListener("click",()=>popup(n,info,done,cur,locked,cleared,correct));
 
-    // 影
     const sh=document.createElementNS(ns,"circle");
     sh.setAttribute("cx",p.x+2);sh.setAttribute("cy",p.y+5);
     sh.setAttribute("r",cur?19:14);
     sh.setAttribute("fill","rgba(0,0,0,.35)");
     sg.appendChild(sh);
 
-    // 外枠（現在地はリング）
     if(cur){
       const ring=document.createElementNS(ns,"circle");
       ring.setAttribute("cx",p.x);ring.setAttribute("cy",p.y);ring.setAttribute("r",22);
@@ -779,7 +708,6 @@ function drawSteps(cleared,isGoal){
       sg.appendChild(ring);
     }
 
-    // メイン円
     const c=document.createElementNS(ns,"circle");
     c.setAttribute("cx",p.x);c.setAttribute("cy",p.y);
     c.setAttribute("r",cur?17:13);
@@ -796,7 +724,6 @@ function drawSteps(cleared,isGoal){
     }
     sg.appendChild(c);
 
-    // 絵文字
     const t=document.createElementNS(ns,"text");
     t.setAttribute("x",p.x);t.setAttribute("y",p.y+6);
     t.setAttribute("text-anchor","middle");
@@ -804,7 +731,6 @@ function drawSteps(cleared,isGoal){
     t.textContent=locked?"🔒":info.e;
     sg.appendChild(t);
 
-    // クリアチェック
     if(done){
       const ck=document.createElementNS(ns,"text");
       ck.setAttribute("x",p.x+9);ck.setAttribute("y",p.y-8);
@@ -812,7 +738,6 @@ function drawSteps(cleared,isGoal){
       ck.textContent="✅";sg.appendChild(ck);
     }
 
-    // 番号
     const num=document.createElementNS(ns,"text");
     num.setAttribute("x",p.x);num.setAttribute("y",p.y+26);
     num.setAttribute("text-anchor","middle");num.setAttribute("font-size","7.5");
@@ -835,7 +760,6 @@ function drawMascot(cleared,isGoal){
   sh.setAttribute("cx",p.x);sh.setAttribute("cy",p.y+3);
   em.setAttribute("x",p.x);em.setAttribute("y",p.y-16);
 
-  // 既存アニメを削除して再付与
   while(em.firstChild)em.removeChild(em.firstChild);
   const ns="http://www.w3.org/2000/svg";
   const at=document.createElementNS(ns,"animateTransform");
