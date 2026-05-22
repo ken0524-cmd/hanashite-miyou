@@ -258,7 +258,7 @@ header {
     </div>
     <div class="chest-open-txt" id="chestOpenTxt">🗝️ かぎがひらいた！</div>
     <div class="chest-sub-txt" id="chestSubTxt">たからばこがひらく...</div>
-    <button class="chest-btn" id="chestCloseBtn" onclick="closeChest()">✨ やったー！</button>
+    <button class="chest-btn" id="chestCloseBtn">✨ やったー！</button>
   </div>
 </div>
 
@@ -950,31 +950,62 @@ function spawnGoldConfetti() {
 
 function closeChest() {
   document.getElementById("chestOverlay").classList.remove("open");
+  // ボタンのonclick経由でも呼ばれるので、ここではフックは呼ばない
+  // （addEventListenerのほうで処理）
+}
+
+// マスnを達成した日付を返す（localStorageのレコードから逆算）
+function getClearDate(n) {
+  const r = load();
+  // n番目のマスは correct >= n*CPR になった時点 → 累計でn*CPR番目の正解がいつか
+  const target = n * CPR;
+  let cumulative = 0;
+  for (const rec of r) {
+    cumulative += (rec.correct || 0);
+    if (cumulative >= target) {
+      return rec.date || null; // "YYYY-MM-DD"形式想定
+    }
+  }
+  return null;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "？";
+  // "YYYY-MM-DD" → "YYYY年MM月DD日"
+  const m = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return m[1] + "年" + parseInt(m[2]) + "月" + parseInt(m[3]) + "日";
+  return dateStr;
 }
 
 function popup(n,info,done,cur,locked,cl,c){
   correct=c;
 
-  // ロックされていて「今まさに解放された」マス（次のマス＝cl+1）ではない locked マス
-  // → 普通のロックポップアップ
-  // cur（現在のマス）→ 普通のポップアップ
-  // done → クリア済みポップアップ
-  // locked かつ n === cl+1 → 宝箱演出（※通常は起こらないが念のため）
-  
   if(locked){
-    // ロックされたマスは通常のポップアップ
+    // ロックされたマス：残り問題数を表示
     document.getElementById("pEmoji").textContent="🔒";
     document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
     document.getElementById("pSub").textContent="あと"+((n-cl-1)*CPR+(CPR-c%CPR))+"こせいかいするとひらくよ！🔑";
     document.getElementById("popup").classList.add("open");
   } else if(cur){
-    // 現在マス：宝箱演出を表示
-    showChestAnimation(info, n, cl, c);
+    // 現在マス：演出済み（lastClearedがcl以上）ならクリア済み表示、そうでなければ演出
+    const lastCleared = getLastCleared();
+    if(lastCleared >= n){
+      // すでに演出を見た → 通常のクリア済み表示
+      const dateStr = getClearDate(n);
+      document.getElementById("pEmoji").textContent=info.e;
+      document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
+      document.getElementById("pSub").textContent="✅ クリアずみ！\n🗓️ たっせいした日："+formatDate(dateStr)+"\n"+info.m;
+      document.getElementById("popup").classList.add("open");
+    } else {
+      // まだ演出を見ていない → 宝箱演出
+      showChestAnimation(info, n, cl, c);
+    }
   } else {
-    // クリア済み：通常ポップアップ
+    // クリア済みマス：達成日付つきポップアップ
+    const dateStr = getClearDate(n);
     document.getElementById("pEmoji").textContent=info.e;
     document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
-    document.getElementById("pSub").textContent="✅ クリアずみ！\n"+info.m;
+    document.getElementById("pSub").textContent="✅ クリアずみ！\n🗓️ たっせいした日："+formatDate(dateStr)+"\n"+info.m;
     document.getElementById("popup").classList.add("open");
   }
 }
@@ -994,7 +1025,65 @@ function confetti(n){
   setTimeout(()=>{w.style.display="none";w.innerHTML=""},3500);
 }
 
+// ページを開いたとき、前回より新しくクリアしたマスがあれば演出を順番に流す
+const LAST_CLEARED_KEY = "hanashite_lastCleared_v2";
+
+function getLastCleared() {
+  try { return parseInt(localStorage.getItem(LAST_CLEARED_KEY) || "0", 10); } catch(e) { return 0; }
+}
+function saveLastCleared(n) {
+  try { localStorage.setItem(LAST_CLEARED_KEY, String(n)); } catch(e) {}
+}
+
+function playNewClearSequence(fromCleared, toCleared) {
+  const indices = [];
+  for (let i = fromCleared; i < toCleared; i++) indices.push(i);
+
+  let idx = 0;
+  function playNext() {
+    if (idx >= indices.length) {
+      saveLastCleared(toCleared); // 全部見終わったら保存
+      return;
+    }
+    const i = indices[idx];
+    const info = INFO[i];
+    const n = i + 1;
+    idx++;
+
+    // この演出を「見た」として先に保存（途中でページを閉じても再表示しない）
+    saveLastCleared(n);
+
+    window._chestOnClose = () => {
+      window._chestOnClose = null;
+      setTimeout(playNext, 300);
+    };
+    showChestAnimation(info, n, i, 0);
+  }
+  playNext();
+}
+
+// chestCloseBtn にコールバックフック
+document.getElementById("chestCloseBtn").addEventListener("click", () => {
+  closeChest();
+  if (typeof window._chestOnClose === "function") window._chestOnClose();
+});
+
+function checkNewClears() {
+  const { correct } = stats();
+  const cleared = step(correct);
+  const lastCleared = getLastCleared();
+
+  if (cleared > lastCleared) {
+    // 新しくクリアしたマスがある → 少し待ってから演出開始
+    setTimeout(() => playNewClearSequence(lastCleared, cleared), 600);
+  } else {
+    // 変化なし → 保存値を最新に同期だけしておく
+    saveLastCleared(cleared);
+  }
+}
+
 render();
+checkNewClears();
 </script>
 </body>
 </html>
