@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぼうけんマップ 🗺️</title>
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow:#FFD93D; --orange:#FF6B6B; --green:#6BCB77;
+  --blue:#4D96FF; --purple:#C77DFF; --pink:#FF9ECD; --dark:#3a3a5c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body {
+  font-family:'Kosugi Maru',sans-serif;
+  background:#1a3a6b;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;
+}
+
+header {
+  width:100%;max-width:540px;
+  padding:.8rem 1rem .5rem;
+  text-align:center;
+  background:rgba(0,0,0,.35);
+  border-bottom:3px solid rgba(255,255,255,.12);
+  flex-shrink:0;
+}
+.title-row { display:flex;align-items:center;justify-content:center;gap:.2rem;margin-bottom:.35rem }
+.tc {
+  font-size:clamp(1.3rem,4.5vw,1.9rem);font-weight:900;
+  display:inline-block;
+  animation:tBounce 2s ease-in-out infinite;
+  text-shadow:2px 2px 0 rgba(0,0,0,.4);
+}
+.tc:nth-child(1){color:#FF6B6B;animation-delay:0s}
+.tc:nth-child(2){color:#FFD93D;animation-delay:.07s}
+.tc:nth-child(3){color:#6BCB77;animation-delay:.14s}
+.tc:nth-child(4){color:#4D96FF;animation-delay:.21s}
+.tc:nth-child(5){color:#C77DFF;animation-delay:.28s}
+.tc:nth-child(6){color:#FF9ECD;animation-delay:.35s}
+.tc:nth-child(7){color:#FFD93D;animation-delay:.42s}
+@keyframes tBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+.stats-row{display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap}
+.chip {
+  background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.22);
+  border-radius:50px;padding:.22rem .7rem;
+  font-size:.68rem;font-weight:700;color:rgba(255,255,255,.9);
+}
+
+.map-wrap {
+  width:100%;max-width:540px;
+  position:relative;
+  flex:1;
+  padding:.5rem .5rem 0;
+}
+
+.map-frame {
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 4px rgba(255,255,255,.15),
+    0 0 0 7px rgba(0,0,0,.3),
+    0 16px 40px rgba(0,0,0,.5);
+  position:relative;
+  border:3px solid #8a6030;
+}
+.map-frame::before {
+  content:'';
+  position:absolute;inset:0;z-index:20;
+  border-radius:17px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.25),inset 0 0 8px rgba(0,0,0,.15);
+  pointer-events:none;
+}
+.map-frame svg {
+  display:block;width:100%;height:auto;
+}
+
+.bottom-panel {
+  width:100%;max-width:540px;
+  padding:.5rem .7rem .8rem;
+  display:flex;flex-direction:column;gap:.4rem;
+}
+
+.prog-card {
+  background:rgba(0,0,0,.4);border:2px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:.5rem .8rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.prog-label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;min-width:52px}
+.prog-bg{flex:1;height:12px;background:rgba(255,255,255,.1);border-radius:12px;overflow:hidden}
+.prog-fill{
+  height:100%;border-radius:12px;
+  background:linear-gradient(90deg,#6BCB77,#4D96FF,#C77DFF);
+  transition:width 1.4s cubic-bezier(.34,1.1,.64,1);
+}
+.prog-pct{font-size:.68rem;font-weight:900;color:white;min-width:28px;text-align:right}
+
+.next-card {
+  background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:.45rem .8rem;
+  display:flex;align-items:center;gap:.55rem;
+}
+.next-icon{font-size:1.3rem}
+.next-text{flex:1}
+.next-label{font-size:.6rem;color:rgba(255,255,255,.5);font-weight:700}
+.next-val{font-size:.8rem;font-weight:900;color:white}
+.next-bar-bg{height:6px;background:rgba(255,255,255,.1);border-radius:6px;margin-top:.2rem;overflow:hidden}
+.next-bar-fill{height:100%;background:linear-gradient(90deg,#FF6B6B,#FFD93D);border-radius:6px;transition:width .8s ease}
+
+.btn-row{display:flex;gap:.45rem}
+.nbtn {
+  flex:1;font-family:'Kosugi Maru',sans-serif;
+  font-size:.78rem;font-weight:700;
+  border:none;border-radius:50px;
+  padding:.6rem .5rem;cursor:pointer;transition:all .15s;
+}
+.btn-p{
+  background:linear-gradient(135deg,#ff7c7c,#e63000);color:white;
+  box-shadow:0 4px 0 #8a1a00,0 6px 16px rgba(255,80,0,.3);
+}
+.btn-p:hover{transform:translateY(-2px)}
+.btn-p:active{transform:translateY(2px);box-shadow:0 2px 0 #8a1a00}
+.btn-k{
+  background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);
+  border:2px solid rgba(255,255,255,.2);
+  box-shadow:0 3px 0 rgba(0,0,0,.2);
+}
+.btn-k:hover{background:rgba(255,255,255,.2)}
+
+.goal-banner {
+  display:none;
+  background:linear-gradient(135deg,#1a5a00,#3a9800);
+  border:2px solid #6BCB77;
+  border-radius:14px;padding:.7rem;text-align:center;
+  box-shadow:0 0 20px rgba(100,200,80,.4);
+}
+.goal-banner.show{display:block}
+.goal-banner .gt{font-size:1rem;font-weight:900;color:#c0ff90}
+.goal-banner .gs{font-size:.7rem;color:rgba(180,255,140,.8)}
+
+.popup {
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);
+}
+.popup.open{display:flex}
+.popup-inner {
+  background:#1e3a5a;
+  border:3px solid rgba(255,255,255,.2);
+  border-radius:24px;padding:1.4rem 1.5rem;
+  max-width:260px;width:88%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:pIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.popup-emoji{font-size:2.8rem;display:block;margin-bottom:.4rem}
+.popup-title{font-size:.95rem;font-weight:900;color:white;margin-bottom:.25rem}
+.popup-sub{font-size:.72rem;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:.85rem}
+.popup-close{
+  font-family:'Kosugi Maru',sans-serif;
+  background:linear-gradient(135deg,#4D96FF,#2a60e0);
+  color:white;border:none;border-radius:50px;
+  padding:.5rem 1.4rem;font-size:.82rem;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 0 #1a3a8a;transition:all .15s;
+}
+.popup-close:hover{transform:translateY(-2px)}
+
+@keyframes chestShake{
+  0%,100%{transform:translateX(0) rotate(0)}
+  20%{transform:translateX(-6px) rotate(-3deg)}
+  40%{transform:translateX(6px) rotate(3deg)}
+  60%{transform:translateX(-5px) rotate(-2deg)}
+  80%{transform:translateX(5px) rotate(2deg)}
+}
+
+.cf{position:fixed;inset:0;pointer-events:none;z-index:200;display:none}
+.cp{position:absolute;animation:cpF linear forwards}
+@keyframes cpF{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="cf" id="cf"></div>
+
+<div class="popup" id="popup">
+  <div class="popup-inner">
+    <span class="popup-emoji" id="pEmoji">⭐</span>
+    <div class="popup-title" id="pTitle">マス1</div>
+    <div class="popup-sub" id="pSub">説明</div>
+    <button class="popup-close" onclick="closePopup()">とじる ✕</button>
+  </div>
+</div>
+
+<header>
+  <div class="title-row">
+    <span class="tc">ぼ</span><span class="tc">う</span><span class="tc">け</span><span class="tc">ん</span><span class="tc">マ</span><span class="tc">ッ</span><span class="tc">プ</span>
+  </div>
+  <div class="stats-row">
+    <div class="chip">✅ <span id="sC">0</span>こ せいかい</div>
+    <div class="chip">📅 <span id="sD">0</span>にち</div>
+    <div class="chip">⭐ <span id="sS">0</span>ほし</div>
+  </div>
+</header>
+
+<div class="map-wrap">
+  <div class="map-frame">
+    <svg id="mapSvg" viewBox="0 0 500 680" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a6aa0"/>
+          <stop offset="100%" stop-color="#0d4a78"/>
+        </linearGradient>
+        <radialGradient id="landGrad" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#8dc840"/>
+          <stop offset="100%" stop-color="#5a9820"/>
+        </radialGradient>
+        <linearGradient id="desertGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#e8c870"/>
+          <stop offset="100%" stop-color="#c8a040"/>
+        </linearGradient>
+        <linearGradient id="snowGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#b0d0e8"/>
+        </linearGradient>
+        <radialGradient id="forestGrad" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#3a9820"/>
+          <stop offset="100%" stop-color="#206010"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glowStrong">
+          <feGaussianBlur stdDeviation="5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- 海（背景） -->
+      <rect width="500" height="680" fill="url(#seaGrad)"/>
+      <path d="M0,80 Q60,65 120,80 Q180,95 240,78 Q300,62 360,78 Q420,94 500,76" stroke="rgba(100,180,255,.18)" stroke-width="2.5" fill="none"/>
+      <path d="M0,200 Q80,188 160,203 Q240,218 320,200 Q400,184 500,201" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
+      <path d="M0,450 Q90,438 180,452 Q270,466 360,448 Q430,434 500,450" stroke="rgba(100,180,255,.15)" stroke-width="2" fill="none"/>
+      <path d="M0,600 Q100,588 200,604 Q300,620 400,602 Q450,594 500,605" stroke="rgba(100,180,255,.13)" stroke-width="2" fill="none"/>
+      <!-- 海の泡 -->
+      <circle cx="40" cy="110" r="3" fill="rgba(255,255,255,.2)"/>
+      <circle cx="70" cy="95" r="2" fill="rgba(255,255,255,.18)"/>
+      <circle cx="460" cy="200" r="3" fill="rgba(255,255,255,.2)"/>
+      <circle cx="430" cy="185" r="2" fill="rgba(255,255,255,.15)"/>
+      <circle cx="55" cy="520" r="3" fill="rgba(255,255,255,.18)"/>
+      <circle cx="470" cy="540" r="2.5" fill="rgba(255,255,255,.2)"/>
+
+      <!-- メイン大陸 -->
+      <path d="
+        M 90,45
+        C 145,25 220,20 300,35
+        C 375,50 430,82 450,128
+        C 468,172 455,218 440,258
+        C 425,298 408,330 418,375
+        C 428,418 458,450 450,500
+        C 440,550 398,590 340,605
+        C 282,620 218,612 170,590
+        C 122,568 92,532 76,492
+        C 60,450 62,405 58,362
+        C 54,318 70,285 60,248
+        C 50,210 28,182 33,142
+        C 38,102 58,65 90,45 Z
+      " fill="url(#landGrad)" opacity="1"/>
+      <path d="
+        M 90,45
+        C 145,25 220,20 300,35
+        C 375,50 430,82 450,128
+        C 468,172 455,218 440,258
+        C 425,298 408,330 418,375
+        C 428,418 458,450 450,500
+        C 440,550 398,590 340,605
+        C 282,620 218,612 170,590
+        C 122,568 92,532 76,492
+        C 60,450 62,405 58,362
+        C 54,318 70,285 60,248
+        C 50,210 28,182 33,142
+        C 38,102 58,65 90,45 Z
+      " fill="none" stroke="#6aa030" stroke-width="2.5" opacity=".6"/>
+
+      <!-- ===== 地形ゾーン（上から：もり→うみ→さばく→やま→おしろ）===== -->
+
+      <!-- 🌲 もりゾーン（北部・ゴール） -->
+      <ellipse cx="200" cy="110" rx="130" ry="78" fill="#2a7818" opacity=".8"/>
+      <!-- 木 -->
+      <g opacity=".95">
+        <polygon points="115,142 105,170 125,170" fill="#1a5a10"/>
+        <polygon points="115,130 102,156 128,156" fill="#228018"/>
+        <polygon points="115,118 104,142 126,142" fill="#2a9020"/>
+        <rect x="112" y="170" width="6" height="8" fill="#6a3a10"/>
+
+        <polygon points="148,135 138,162 158,162" fill="#1a5a10"/>
+        <polygon points="148,123 135,148 161,148" fill="#228018"/>
+        <polygon points="148,112 137,136 159,136" fill="#2a9020"/>
+        <rect x="145" y="162" width="6" height="8" fill="#6a3a10"/>
+
+        <polygon points="180,148 170,174 190,174" fill="#1a5a10"/>
+        <polygon points="180,136 168,160 192,160" fill="#228018"/>
+        <polygon points="180,125 169,148 191,148" fill="#2a9020"/>
+        <rect x="177" y="174" width="6" height="8" fill="#6a3a10"/>
+
+        <polygon points="215,138 205,164 225,164" fill="#1a5a10"/>
+        <polygon points="215,126 203,150 227,150" fill="#228018"/>
+        <polygon points="215,115 204,138 226,138" fill="#2a9020"/>
+        <rect x="212" y="164" width="6" height="8" fill="#6a3a10"/>
+
+        <polygon points="250,145 240,170 260,170" fill="#1a5a10"/>
+        <polygon points="250,133 238,157 262,157" fill="#228018"/>
+        <polygon points="250,122 239,145 261,145" fill="#2a9020"/>
+        <rect x="247" y="170" width="6" height="8" fill="#6a3a10"/>
+
+        <polygon points="282,136 272,160 292,160" fill="#1a5a10"/>
+        <polygon points="282,124 270,147 294,147" fill="#228018"/>
+        <polygon points="282,113 271,136 293,136" fill="#2a9020"/>
+        <rect x="279" y="160" width="6" height="8" fill="#6a3a10"/>
+
+        <polygon points="160,96 150,118 170,118" fill="#228018"/>
+        <polygon points="160,85 149,108 171,108" fill="#2a9020"/>
+        <rect x="157" y="118" width="6" height="7" fill="#6a3a10"/>
+
+        <polygon points="245,98 235,120 255,120" fill="#228018"/>
+        <polygon points="245,87 234,110 256,110" fill="#2a9020"/>
+        <rect x="242" y="120" width="6" height="7" fill="#6a3a10"/>
+      </g>
+
+      <!-- 🌊 うみのほとりゾーン（右上） -->
+      <ellipse cx="385" cy="215" rx="78" ry="80" fill="#2060a8" opacity=".55"/>
+      <!-- さんご・波 -->
+      <path d="M330,255 Q355,240 380,252 Q405,264 430,248" stroke="#60c0ff" stroke-width="2.5" fill="none" opacity=".7"/>
+      <path d="M335,268 Q362,255 390,265 Q415,276 435,260" stroke="#60c0ff" stroke-width="2" fill="none" opacity=".5"/>
+      <circle cx="360" cy="230" r="5" fill="#FF9ECD" opacity=".7"/>
+      <circle cx="378" cy="222" r="4" fill="#FF6B6B" opacity=".6"/>
+      <circle cx="395" cy="235" r="6" fill="#FF9ECD" opacity=".65"/>
+      <circle cx="412" cy="225" r="4" fill="#C77DFF" opacity=".55"/>
+      <!-- ヤシの木 -->
+      <rect x="342" y="185" width="5" height="40" rx="2.5" fill="#6a3a10"/>
+      <ellipse cx="344" cy="185" rx="20" ry="10" fill="#2a8020" opacity=".9" transform="rotate(-20,344,185)"/>
+      <ellipse cx="344" cy="185" rx="18" ry="9" fill="#3a9830" opacity=".8" transform="rotate(10,344,185)"/>
+      <ellipse cx="344" cy="188" rx="16" ry="8" fill="#4ab040" opacity=".8" transform="rotate(-5,344,188)"/>
+
+      <!-- 🏜️ 砂漠ゾーン（右中） -->
+      <ellipse cx="370" cy="370" rx="90" ry="100" fill="#c8a040" opacity=".75"/>
+      <!-- 砂丘 -->
+      <path d="M298,410 Q338,388 375,402 Q408,416 440,396 L440,450 L298,450 Z" fill="#d4a800" opacity=".45"/>
+      <path d="M305,440 Q345,422 382,436 Q412,450 440,430 L440,470 L305,470 Z" fill="#c09800" opacity=".4"/>
+      <!-- サボテン -->
+      <g fill="#5a8820">
+        <rect x="318" y="315" width="9" height="38" rx="4.5"/>
+        <rect x="303" y="325" width="24" height="8" rx="4"/>
+        <rect x="296" y="310" width="9" height="24" rx="4.5"/>
+        <rect x="327" y="336" width="24" height="8" rx="4"/>
+        <rect x="342" y="322" width="9" height="22" rx="4.5"/>
+      </g>
+      <g fill="#5a8820">
+        <rect x="400" y="328" width="8" height="32" rx="4"/>
+        <rect x="387" y="337" width="21" height="7" rx="3.5"/>
+        <rect x="408" y="342" width="21" height="7" rx="3.5"/>
+      </g>
+      <ellipse cx="345" cy="398" rx="15" ry="7" fill="#9a7820" opacity=".6"/>
+      <ellipse cx="415" cy="412" rx="11" ry="5" fill="#9a7820" opacity=".5"/>
+
+      <!-- 🏔️ 雪山ゾーン（左中） -->
+      <ellipse cx="128" cy="430" rx="88" ry="90" fill="#6888a8" opacity=".7"/>
+      <polygon points="95,510 62,380 128,380" fill="#7a9abc"/>
+      <polygon points="95,510 70,420 120,420" fill="#8aacce"/>
+      <polygon points="62,380 95,510 70,510" fill="#6a8aaa"/>
+      <polygon points="95,380 75,425 115,425" fill="white" opacity=".92"/>
+      <polygon points="95,380 83,406 107,406" fill="white"/>
+      <polygon points="145,510 115,398 175,398" fill="#7090b0"/>
+      <polygon points="145,510 120,445 170,445" fill="#8aacce"/>
+      <polygon points="145,398 127,440 163,440" fill="white" opacity=".88"/>
+      <polygon points="145,398 133,422 157,422" fill="white"/>
+      <ellipse cx="80" cy="508" rx="12" ry="5" fill="#5a7090" opacity=".6"/>
+      <ellipse cx="168" cy="506" rx="10" ry="4" fill="#5a7090" opacity=".6"/>
+
+      <!-- 🏰 おしろゾーン（南・スタート） -->
+      <ellipse cx="265" cy="570" rx="115" ry="85" fill="#7050a0" opacity=".65"/>
+      <g transform="translate(228,520)">
+        <rect x="0" y="55" width="80" height="55" rx="3" fill="#8060b0"/>
+        <rect x="0" y="55" width="80" height="55" rx="3" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
+        <rect x="-12" y="36" width="24" height="58" rx="3" fill="#6a4a98"/>
+        <rect x="68" y="36" width="24" height="58" rx="3" fill="#6a4a98"/>
+        <rect x="30" y="16" width="20" height="46" rx="2" fill="#7858a8"/>
+        <polygon points="-12,36 0,12 12,36" fill="#5a3888"/>
+        <polygon points="68,36 80,12 92,36" fill="#5a3888"/>
+        <polygon points="30,16 40,−2 50,16" fill="#6848a0"/>
+        <rect x="39" y="-2" width="3" height="20" fill="#4a2870"/>
+        <polygon points="42,-2 42,9 55,3.5" fill="#FF6B6B"/>
+        <rect x="-5" y="12" width="3" height="16" fill="#4a2870"/>
+        <polygon points="-2,12 -2,20 10,16" fill="#FFD93D"/>
+        <rect x="79" y="12" width="3" height="16" fill="#4a2870"/>
+        <polygon points="82,12 82,20 94,16" fill="#FFD93D"/>
+        <path d="M32,110 L32,84 Q40,73 48,84 L48,110 Z" fill="#2a1040"/>
+        <rect x="5" y="65" width="11" height="13" rx="2" fill="#2a1040"/>
+        <rect x="64" y="65" width="11" height="13" rx="2" fill="#2a1040"/>
+        <rect x="33" y="38" width="12" height="13" rx="2" fill="#2a1040"/>
+        <rect x="0" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+        <rect x="13" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+        <rect x="58" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+        <rect x="71" y="44" width="9" height="11" rx="1" fill="#6a4a98"/>
+      </g>
+
+      <!-- 小島・飾り -->
+      <ellipse cx="448" cy="590" rx="32" ry="20" fill="#6a9830"/>
+      <polygon points="448,574 437,592 459,592" fill="#2a6010"/>
+      <polygon points="448,568 439,584 457,584" fill="#3a8020"/>
+      <rect x="445" y="592" width="6" height="5" fill="#5a3010"/>
+      <ellipse cx="42" cy="610" rx="26" ry="16" fill="#6a9830"/>
+      <polygon points="42,597 32,613 52,613" fill="#2a6010"/>
+      <polygon points="42,591 34,607 50,607" fill="#3a8020"/>
+      <ellipse cx="465" cy="110" rx="22" ry="14" fill="#6a9830"/>
+      <polygon points="465,99 456,113 474,113" fill="#3a8020"/>
+
+      <!-- ===== ぐねぐね道（森→うみ→さばく→やま→おしろ）===== -->
+      <!-- 道の影 -->
+      <path d="
+        M 205,55
+        C 240,60 295,85 350,118
+        C 400,148 440,185 440,220
+        C 440,258 415,278 395,308
+        C 372,340 358,368 365,400
+        C 374,435 410,455 418,490
+        C 424,520 398,548 360,562
+        C 320,577 270,572 232,582
+        C 200,592 178,608 192,630
+        C 205,645 240,650 268,648
+      " stroke="rgba(0,0,0,.38)" stroke-width="24" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"
+        transform="translate(3,5)"/>
+
+      <!-- 道の縁 -->
+      <path d="
+        M 205,55
+        C 240,60 295,85 350,118
+        C 400,148 440,185 440,220
+        C 440,258 415,278 395,308
+        C 372,340 358,368 365,400
+        C 374,435 410,455 418,490
+        C 424,520 398,548 360,562
+        C 320,577 270,572 232,582
+        C 200,592 178,608 192,630
+        C 205,645 240,650 268,648
+      " stroke="#6a4a10" stroke-width="24" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- 道本体 -->
+      <path id="roadPath" d="
+        M 205,55
+        C 240,60 295,85 350,118
+        C 400,148 440,185 440,220
+        C 440,258 415,278 395,308
+        C 372,340 358,368 365,400
+        C 374,435 410,455 418,490
+        C 424,520 398,548 360,562
+        C 320,577 270,572 232,582
+        C 200,592 178,608 192,630
+        C 205,645 240,650 268,648
+      " stroke="#e8d088" stroke-width="17" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- 道の点線（中央） -->
+      <path d="
+        M 205,55
+        C 240,60 295,85 350,118
+        C 400,148 440,185 440,220
+        C 440,258 415,278 395,308
+        C 372,340 358,368 365,400
+        C 374,435 410,455 418,490
+        C 424,520 398,548 360,562
+        C 320,577 270,572 232,582
+        C 200,592 178,608 192,630
+        C 205,645 240,650 268,648
+      " stroke="rgba(255,255,255,.45)" stroke-width="3.5" fill="none"
+        stroke-linecap="round" stroke-dasharray="10,13"/>
+
+      <!-- ===== スタートフラッグ（森・上左）===== -->
+      <g transform="translate(205,60)" filter="url(#glow)">
+        <rect x="-2" y="-30" width="4" height="32" rx="2" fill="#5a3010"/>
+        <polygon points="2,-30 2,-15 18,-22.5" fill="#6BCB77"/>
+        <circle cx="0" cy="6" r="9" fill="#FFD93D" stroke="white" stroke-width="2.5"/>
+        <text x="0" y="10" text-anchor="middle" font-size="9" font-family="sans-serif" font-weight="bold" fill="#3a2000">S</text>
+      </g>
+
+      <!-- ===== ゴール（お城・下）===== -->
+      <g id="goalMarker" transform="translate(268,648)">
+        <circle cx="0" cy="0" r="26" fill="#5a3888" stroke="rgba(255,255,255,.35)" stroke-width="2.5"/>
+        <text x="0" y="10" text-anchor="middle" font-size="24">🏆</text>
+        <circle cx="0" cy="0" r="30" fill="none" stroke="#FFD93D" stroke-width="1.5" opacity="0.5">
+          <animate attributeName="r" values="28;36;28" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- ===== マスグループ（JS生成） ===== -->
+      <g id="stepsGroup"></g>
+
+      <!-- ===== 肉まんマスコット ===== -->
+      <g id="mascot" style="display:none">
+        <!-- 影 -->
+        <ellipse id="mShadow" cx="0" cy="0" rx="18" ry="7" fill="rgba(0,0,0,.28)"/>
+        <!-- 本体グループ（上下アニメ） -->
+        <g id="mBody">
+          <!-- ぴょんぴょんアニメ -->
+          <animateTransform id="mBounce" attributeName="transform" type="translate"
+            values="0,0;0,-10;0,0" dur="1.1s" repeatCount="indefinite"/>
+          <!-- 肉まん本体 -->
+          <path d="M0,-36 C8,-36 20,-32 27,-24 C35,-14 38,-4 38,8 C38,22 24,34 0,34 C-24,34 -38,22 -38,8 C-38,-4 -35,-14 -27,-24 C-20,-32 -8,-36 0,-36 Z"
+            fill="#fff5e0" stroke="#d4a060" stroke-width="2"/>
+          <!-- 上部のひだ -->
+          <g stroke="#c89040" stroke-width="1.8" fill="none" stroke-linecap="round">
+            <path d="M-8,-30 C-6,-36 -2,-38 0,-38"/>
+            <path d="M-4,-33 C-2,-37 0,-38 0,-38"/>
+            <path d="M4,-33 C2,-37 0,-38 0,-38"/>
+            <path d="M8,-30 C6,-36 2,-38 0,-38"/>
+          </g>
+          <!-- ほっぺ -->
+          <ellipse cx="-22" cy="10" rx="9" ry="5.5" fill="#FFB6C1" opacity=".55"/>
+          <ellipse cx="22" cy="10" rx="9" ry="5.5" fill="#FFB6C1" opacity=".55"/>
+          <!-- 左目 -->
+          <ellipse cx="-11" cy="0" rx="9" ry="11" fill="white" stroke="#999" stroke-width="1.6"/>
+          <!-- 右目 -->
+          <ellipse cx="11" cy="0" rx="9" ry="11" fill="white" stroke="#999" stroke-width="1.6"/>
+          <!-- 左瞳 -->
+          <ellipse cx="-8" cy="1" rx="5" ry="6.5" fill="#5a3a1a"/>
+          <!-- 右瞳 -->
+          <ellipse cx="8" cy="1" rx="5" ry="6.5" fill="#5a3a1a"/>
+          <!-- ハイライト -->
+          <ellipse cx="-7" cy="-2" rx="2" ry="2.5" fill="white" opacity=".9"/>
+          <ellipse cx="9" cy="-2" rx="2" ry="2.5" fill="white" opacity=".9"/>
+          <!-- 口 -->
+          <path id="mMouth" d="M-8,18 Q0,25 8,18" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- 地名ラベル -->
+      <g transform="translate(200,62)">
+        <rect x="-40" y="-12" width="80" height="20" rx="7" fill="rgba(0,40,0,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#90ee60" font-weight="bold">🌲 もり スタート！</text>
+      </g>
+      <g transform="translate(388,215)">
+        <rect x="-40" y="-12" width="80" height="20" rx="7" fill="rgba(0,30,80,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#80d8ff" font-weight="bold">🌊 うみのほとり</text>
+      </g>
+      <g transform="translate(370,450)">
+        <rect x="-36" y="-12" width="72" height="20" rx="7" fill="rgba(60,30,0,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#ffe080" font-weight="bold">🏜️ さばく</text>
+      </g>
+      <g transform="translate(128,510)">
+        <rect x="-38" y="-12" width="76" height="20" rx="7" fill="rgba(0,20,60,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#c0e8ff" font-weight="bold">⛰️ やまのみち</text>
+      </g>
+      <g transform="translate(265,640)">
+        <rect x="-38" y="-12" width="76" height="20" rx="7" fill="rgba(30,0,60,.6)"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Kosugi Maru',sans-serif" font-size="10" fill="#e0b8ff" font-weight="bold">🏰 おしろ ゴール！</text>
+      </g>
+
+      <!-- コンパス -->
+      <g transform="translate(462,50)">
+        <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>
+        <text x="0" y="-9" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.8)" font-weight="bold">N</text>
+        <text x="0" y="13" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.6)">S</text>
+        <text x="-12" y="3" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.6)">W</text>
+        <text x="12" y="3" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.6)">E</text>
+        <polygon points="0,-15 -4,0 0,-4 4,0" fill="white" opacity=".9"/>
+        <polygon points="0,15 -4,0 0,4 4,0" fill="rgba(255,255,255,.4)"/>
+      </g>
+
+      <!-- スケール -->
+      <g transform="translate(25,660)" opacity=".6">
+        <rect x="0" y="-3" width="50" height="6" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
+        <rect x="0" y="-3" width="25" height="6" fill="rgba(255,255,255,.4)"/>
+        <text x="25" y="-6" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.7)">1にち</text>
+      </g>
+
+      <g opacity=".06" stroke="white" stroke-width="1">
+        <line x1="250" y1="0" x2="250" y2="680"/>
+        <line x1="0" y1="340" x2="500" y2="340"/>
+      </g>
+
+    </svg>
+  </div>
+</div>
+
+<div class="bottom-panel">
+  <div class="goal-banner" id="goalBanner">
+    <div class="gt">🏰 やったー！おしろにとうちゃく！！ 🎊</div>
+    <div class="gs">25まいのマスをぜんぶせいかした！すごい！</div>
+  </div>
+
+  <div class="prog-card">
+    <div class="prog-label" id="progLabel">スタート</div>
+    <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-pct" id="progPct">0%</div>
+  </div>
+
+  <div class="next-card" id="nextCard">
+    <div class="next-icon" id="nextIcon">🎯</div>
+    <div class="next-text">
+      <div class="next-label">つぎのマスまで</div>
+      <div class="next-val">あと <span id="nextNum">5</span>こ せいかい！</div>
+      <div class="next-bar-bg"><div class="next-bar-fill" id="nextBarFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="nbtn btn-p" onclick="location.href='hanashite_miyou.html'">🎤 れんしゅうする！</button>
+    <button class="nbtn btn-k" onclick="location.href='kiroku.html'">📒 きろくを見る</button>
+  </div>
+</div>
+
+<script>
+const SK = "hanashite_records_v2";
+const CPR = 5;
+const TOTAL = 25;
+
+// 25マスの座標（森→うみ→さばく→やま→おしろ、大きくぐねぐね）
+const POS = [
+  // もりエリア（1-5）左上→右へ
+  {x:210,y:62},{x:242,y:68},{x:278,y:84},{x:316,y:102},{x:348,y:122},
+  // うみのほとりエリア（6-10）右上カーブ
+  {x:382,y:145},{x:418,y:172},{x:438,y:200},{x:440,y:230},{x:428,y:260},
+  // さばくエリア（11-15）右中→折り返し
+  {x:410,y:285},{x:390,y:308},{x:372,y:334},{x:360,y:362},{x:362,y:392},
+  // やまエリア（16-20）左へ大きく折れる
+  {x:370,y:420},{x:398,y:446},{x:418,y:472},{x:424,y:500},{x:408,y:528},
+  // おしろエリア（21-25）左下へ
+  {x:375,y:550},{x:336,y:566},{x:290,y:574},{x:244,y:580},{x:268,y:644},
+];
+
+// エリアとメッセージ（もり→うみ→さばく→やま→おしろ）
+const INFO = [
+  {e:"🌲",a:"もりのみち",m:"もりからぼうけんのはじまり！さあ、しゅっぱつ！"},
+  {e:"🌿",a:"もりのみち",m:"みどりのしげみがいっぱい！きれいだね！"},
+  {e:"🐿️",a:"もりのみち",m:"りすがとびはねてる！かわいい！"},
+  {e:"🍄",a:"もりのみち",m:"きのこをみつけたよ！おもしろいね！"},
+  {e:"🌱",a:"もりのみち",m:"もりをぬけた！つぎはうみだ！"},
+  {e:"⛵",a:"うみのほとり",m:"うみがみえてきた！ふねがみえるよ！"},
+  {e:"🦀",a:"うみのほとり",m:"かにがよこにはしってる！"},
+  {e:"🐠",a:"うみのほとり",m:"いろんなさかながおよいでる！"},
+  {e:"🐚",a:"うみのほとり",m:"きれいなかいがらだ！"},
+  {e:"🌊",a:"うみのほとり",m:"なみがきれい！うみをぬけた！"},
+  {e:"🌅",a:"さばくのみち",m:"さばくにとうちゃく！うつくしいゆうやけ！"},
+  {e:"⭐",a:"さばくのみち",m:"よぞらにほしがかがやく！"},
+  {e:"🐪",a:"さばくのみち",m:"らくだにのれるかな？"},
+  {e:"🦎",a:"さばくのみち",m:"とかげがいわのうえにいる！"},
+  {e:"🌵",a:"さばくのみち",m:"さばくをぬけた！つぎはやまだ！"},
+  {e:"🗻",a:"やまのみち",m:"たかいやまにのぼるぞ！"},
+  {e:"🌈",a:"やまのみち",m:"にじがかかったよ！きれい！"},
+  {e:"🦅",a:"やまのみち",m:"わしがおおぞらをとんでる！"},
+  {e:"🌸",a:"やまのみち",m:"さくらがさいてきれい！"},
+  {e:"❄️",a:"やまのみち",m:"ゆきだ！やまをこえた！もうすぐおしろ！"},
+  {e:"🎉",a:"おしろへ！",m:"おしろがみえてきた！もうすこし！"},
+  {e:"🎊",a:"おしろへ！",m:"かみふぶきがとんでる！"},
+  {e:"💎",a:"おしろへ！",m:"ひかるたからものをみつけた！"},
+  {e:"👑",a:"おしろへ！",m:"おうかんがかがやいてる！ゴールはすぐそこ！"},
+  {e:"🏰",a:"おしろへ！",m:"おしろにとうちゃく！やったー！！！"},
+];
+
+function load(){try{return JSON.parse(localStorage.getItem(SK)||"[]")}catch(e){return[]}}
+function stats(){
+  const r=load();
+  return{
+    correct:r.reduce((a,x)=>a+(x.correct||0),0),
+    days:new Set(r.map(x=>x.date)).size,
+    stars:r.reduce((a,x)=>a+(x.stars||0),0)
+  }
+}
+function step(c){return Math.min(Math.floor(c/CPR),TOTAL)}
+
+let _prev=-1;
+
+function render(){
+  const {correct,days,stars}=stats();
+  const cleared=step(correct);
+  const isGoal=cleared>=TOTAL;
+  const inStep=correct%CPR;
+  const rem=CPR-inStep;
+
+  document.getElementById("sC").textContent=correct;
+  document.getElementById("sD").textContent=days;
+  document.getElementById("sS").textContent=stars;
+
+  const pct=Math.min(Math.round(cleared/TOTAL*100),100);
+  document.getElementById("progFill").style.width=pct+"%";
+  document.getElementById("progPct").textContent=pct+"%";
+  document.getElementById("progLabel").textContent=cleared===0?"スタート":cleared+"マスめ";
+
+  if(isGoal){
+    document.getElementById("goalBanner").classList.add("show");
+    document.getElementById("nextCard").style.display="none";
+    if(_prev<TOTAL)confetti(70);
+  } else {
+    document.getElementById("goalBanner").classList.remove("show");
+    document.getElementById("nextCard").style.display="flex";
+    document.getElementById("nextNum").textContent=rem;
+    document.getElementById("nextBarFill").style.width=Math.round(inStep/CPR*100)+"%";
+    document.getElementById("nextIcon").textContent=
+      cleared<5?"🌲":cleared<10?"🌊":cleared<15?"🏜️":cleared<20?"⛰️":"🏰";
+  }
+
+  if(_prev>=0&&cleared>_prev&&!isGoal)confetti(28);
+  _prev=cleared;
+
+  drawSteps(cleared,isGoal);
+  drawMascot(cleared,isGoal);
+}
+
+function drawSteps(cleared,isGoal){
+  const g=document.getElementById("stepsGroup");
+  g.innerHTML="";
+  const ns="http://www.w3.org/2000/svg";
+
+  POS.forEach((p,i)=>{
+    const n=i+1;
+    const done=cleared>=n;
+    const cur=cleared+1===n&&!isGoal;
+    const locked=!done&&!cur;
+    const info=INFO[i];
+
+    const sg=document.createElementNS(ns,"g");
+    sg.style.cursor="pointer";
+    sg.addEventListener("click",()=>popup(n,info,done,cur,locked,cleared,correct));
+
+    const sh=document.createElementNS(ns,"circle");
+    sh.setAttribute("cx",p.x+2);sh.setAttribute("cy",p.y+5);
+    sh.setAttribute("r",cur?19:14);
+    sh.setAttribute("fill","rgba(0,0,0,.35)");
+    sg.appendChild(sh);
+
+    if(cur){
+      const ring=document.createElementNS(ns,"circle");
+      ring.setAttribute("cx",p.x);ring.setAttribute("cy",p.y);ring.setAttribute("r",22);
+      ring.setAttribute("fill","none");ring.setAttribute("stroke","#FF6B6B");ring.setAttribute("stroke-width","2.5");ring.setAttribute("opacity","0.5");
+      const a1=document.createElementNS(ns,"animate");
+      a1.setAttribute("attributeName","r");a1.setAttribute("values","20;28;20");
+      a1.setAttribute("dur","1.6s");a1.setAttribute("repeatCount","indefinite");
+      const a2=document.createElementNS(ns,"animate");
+      a2.setAttribute("attributeName","opacity");a2.setAttribute("values","0.5;0;0.5");
+      a2.setAttribute("dur","1.6s");a2.setAttribute("repeatCount","indefinite");
+      ring.appendChild(a1);ring.appendChild(a2);
+      sg.appendChild(ring);
+    }
+
+    const c=document.createElementNS(ns,"circle");
+    c.setAttribute("cx",p.x);c.setAttribute("cy",p.y);
+    c.setAttribute("r",cur?17:13);
+    if(done){
+      c.setAttribute("fill","#5ab840");
+      c.setAttribute("stroke","white");c.setAttribute("stroke-width","2.5");
+    } else if(cur){
+      c.setAttribute("fill","#fff8e0");
+      c.setAttribute("stroke","#FF6B6B");c.setAttribute("stroke-width","3.5");
+    } else {
+      c.setAttribute("fill","rgba(0,0,0,.4)");
+      c.setAttribute("stroke","rgba(255,255,255,.3)");c.setAttribute("stroke-width","2");
+      c.setAttribute("stroke-dasharray","4,3");
+    }
+    sg.appendChild(c);
+
+    const t=document.createElementNS(ns,"text");
+    t.setAttribute("x",p.x);t.setAttribute("y",p.y+6);
+    t.setAttribute("text-anchor","middle");
+    t.setAttribute("font-size",cur?"17":locked?"12":"13");
+    t.textContent=locked?"🔒":info.e;
+    sg.appendChild(t);
+
+    if(done){
+      const ck=document.createElementNS(ns,"text");
+      ck.setAttribute("x",p.x+9);ck.setAttribute("y",p.y-8);
+      ck.setAttribute("text-anchor","middle");ck.setAttribute("font-size","10");
+      ck.textContent="✅";sg.appendChild(ck);
+    }
+
+    const num=document.createElementNS(ns,"text");
+    num.setAttribute("x",p.x);num.setAttribute("y",p.y+26);
+    num.setAttribute("text-anchor","middle");num.setAttribute("font-size","7.5");
+    num.setAttribute("font-family","'Kosugi Maru',sans-serif");num.setAttribute("font-weight","bold");
+    num.setAttribute("fill","rgba(255,255,255,.6)");
+    num.textContent=n;
+    sg.appendChild(num);
+
+    g.appendChild(sg);
+  });
+}
+
+function drawMascot(cleared,isGoal){
+  const m=document.getElementById("mascot");
+  if(cleared===0&&!isGoal){
+    // スタート前：森の入口に待機
+    m.style.display="";
+    const p=POS[0];
+    document.getElementById("mShadow").setAttribute("cx",p.x);
+    document.getElementById("mShadow").setAttribute("cy",p.y+36);
+    document.getElementById("mBody").setAttribute("transform","translate("+p.x+","+(p.y+20)+")");
+    return;
+  }
+  if(isGoal){
+    // ゴール：最後のマスで大喜び
+    m.style.display="";
+    const p=POS[TOTAL-1];
+    document.getElementById("mShadow").setAttribute("cx",p.x);
+    document.getElementById("mShadow").setAttribute("cy",p.y+36);
+    document.getElementById("mBody").setAttribute("transform","translate("+p.x+","+(p.y+20)+")");
+    document.getElementById("mMouth").setAttribute("d","M-10,16 Q0,28 10,16");
+    return;
+  }
+  m.style.display="";
+  const p=POS[cleared-1];
+  document.getElementById("mShadow").setAttribute("cx",p.x);
+  document.getElementById("mShadow").setAttribute("cy",p.y+36);
+  document.getElementById("mBody").setAttribute("transform","translate("+p.x+","+(p.y+20)+")");
+  document.getElementById("mMouth").setAttribute("d","M-8,18 Q0,25 8,18");
+}
+
+let correct=0;
+function popup(n,info,done,cur,locked,cl,c){
+  correct=c;
+  document.getElementById("pEmoji").textContent=locked?"🔒":info.e;
+  document.getElementById("pTitle").textContent="マス"+n+"："+info.a;
+  document.getElementById("pSub").textContent=
+    locked?("あと"+((n-cl-1)*CPR+(CPR-c%CPR))+"こせいかいするとひらくよ！🔑"):
+    cur?"👈 いまここ！\n"+info.m:
+    "✅ クリアずみ！\n"+info.m;
+  document.getElementById("popup").classList.add("open");
+}
+function closePopup(){document.getElementById("popup").classList.remove("open")}
+document.getElementById("popup").addEventListener("click",e=>{if(e.target===e.currentTarget)closePopup()});
+
+function confetti(n){
+  const w=document.getElementById("cf");
+  w.style.display="block";
+  const cols=["#FFD93D","#FF6B6B","#6BCB77","#4D96FF","#C77DFF","#FF9ECD"];
+  for(let i=0;i<n;i++){
+    const p=document.createElement("div");p.className="cp";
+    const sz=6+Math.random()*10;
+    p.style.cssText=`left:${Math.random()*100}%;top:-20px;width:${sz}px;height:${sz}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?"50%":"3px"};animation-duration:${1+Math.random()*1.6}s;animation-delay:${Math.random()*.8}s;`;
+    w.appendChild(p);
+  }
+  setTimeout(()=>{w.style.display="none";w.innerHTML=""},3500);
+}
+
+render();
+</script>
+</body>
+</html>
